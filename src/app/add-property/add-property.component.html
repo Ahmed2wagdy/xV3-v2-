@@ -1,0 +1,403 @@
+<!-- Add Property Component HTML with Payment Integration -->
+<div class="container py-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="page-title">Add New Property</h1>
+    <button class="btn btn-outline-secondary" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i> Back
+    </button>
+  </div>
+
+  <!-- Payment Status Alert -->
+  <div *ngIf="paymentCompleted" class="alert alert-success d-flex align-items-center mb-4">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <div>
+      <strong>Payment Successful!</strong> Your payment has been processed. Now completing property listing...
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading amenities...</p>
+  </div>
+
+  <!-- Main Form -->
+  <div *ngIf="!isLoading" class="row">
+    <div class="col-12">
+      <form [formGroup]="propertyForm" (ngSubmit)="onSubmit()" class="property-form">
+        
+        <!-- Basic Information Section -->
+        <div class="form-section">
+          <h3 class="section-title">Basic Information</h3>
+          
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="title" class="form-label">Property Title *</label>
+                <input 
+                  type="text" 
+                  id="title"
+                  formControlName="title" 
+                  class="form-control"
+                  [class.is-invalid]="submitted && f['title'].errors"
+                  placeholder="e.g., Modern 3BR Apartment in Cairo"
+                >
+                <div *ngIf="submitted && f['title'].errors" class="invalid-feedback">
+                  <div *ngIf="f['title'].errors['required']">Property title is required</div>
+                  <div *ngIf="f['title'].errors['minlength']">Title must be at least 3 characters</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="price" class="form-label">Price (EGP) *</label>
+                <input 
+                  type="number" 
+                  id="price"
+                  formControlName="price" 
+                  class="form-control"
+                  [class.is-invalid]="submitted && f['price'].errors"
+                  placeholder="e.g., 250000"
+                >
+                <div *ngIf="submitted && f['price'].errors" class="invalid-feedback">
+                  <div *ngIf="f['price'].errors['required']">Price is required</div>
+                  <div *ngIf="f['price'].errors['min']">Price must be greater than 0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description *</label>
+            <textarea 
+              id="description"
+              formControlName="description" 
+              class="form-control"
+              rows="4"
+              [class.is-invalid]="submitted && f['description'].errors"
+              placeholder="Describe your property, its features, and what makes it special..."
+            ></textarea>
+            <div *ngIf="submitted && f['description'].errors" class="invalid-feedback">
+              <div *ngIf="f['description'].errors['required']">Description is required</div>
+              <div *ngIf="f['description'].errors['minlength']">Description must be at least 10 characters</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property Details Section -->
+        <div class="form-section">
+          <h3 class="section-title">Property Details</h3>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="propertyType" class="form-label">Property Type *</label>
+                <select 
+                  id="propertyType"
+                  formControlName="propertyType" 
+                  class="form-select"
+                  [class.is-invalid]="submitted && f['propertyType'].errors"
+                >
+                  <option value="">Select property type</option>
+                  <option *ngFor="let type of propertyTypes" [value]="type">{{ type }}</option>
+                </select>
+                <div *ngIf="submitted && f['propertyType'].errors" class="invalid-feedback">
+                  Property type is required
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="size" class="form-label">Size (m²) *</label>
+                <input 
+                  type="number" 
+                  id="size"
+                  formControlName="size" 
+                  class="form-control"
+                  [class.is-invalid]="submitted && f['size'].errors"
+                  placeholder="e.g., 120"
+                >
+                <div *ngIf="submitted && f['size'].errors" class="invalid-feedback">
+                  <div *ngIf="f['size'].errors['required']">Size is required</div>
+                  <div *ngIf="f['size'].errors['min']">Size must be greater than 0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="bedrooms" class="form-label">Bedrooms *</label>
+                <input 
+                  type="number" 
+                  id="bedrooms"
+                  formControlName="bedrooms" 
+                  class="form-control"
+                  [class.is-invalid]="submitted && f['bedrooms'].errors"
+                  placeholder="e.g., 3"
+                  min="0"
+                >
+                <div *ngIf="submitted && f['bedrooms'].errors" class="invalid-feedback">
+                  <div *ngIf="f['bedrooms'].errors['required']">Number of bedrooms is required</div>
+                  <div *ngIf="f['bedrooms'].errors['min']">Bedrooms cannot be negative</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="bathrooms" class="form-label">Bathrooms *</label>
+                <input 
+                  type="number" 
+                  id="bathrooms"
+                  formControlName="bathrooms" 
+                  class="form-control"
+                  [class.is-invalid]="submitted && f['bathrooms'].errors"
+                  placeholder="e.g., 2"
+                  min="1"
+                >
+                <div *ngIf="submitted && f['bathrooms'].errors" class="invalid-feedback">
+                  <div *ngIf="f['bathrooms'].errors['required']">Number of bathrooms is required</div>
+                  <div *ngIf="f['bathrooms'].errors['min']">At least 1 bathroom is required</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="form-section">
+          <h3 class="section-title">Location</h3>
+          
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="governate" class="form-label">Governorate *</label>
+                <select 
+                  id="governate"
+                  formControlName="governate" 
+                  class="form-select"
+                  [class.is-invalid]="submitted && f['governate'].errors"
+                >
+                  <option value="">Select governorate</option>
+                  <option *ngFor="let gov of governorates" [value]="gov">{{ gov }}</option>
+                </select>
+                <div *ngIf="submitted && f['governate'].errors" class="invalid-feedback">
+                  Governorate is required
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="city" class="form-label">City *</label>
+                <select 
+                  id="city"
+                  formControlName="city" 
+                  class="form-select"
+                  [class.is-invalid]="submitted && f['city'].errors"
+                >
+                  <option value="">Select city</option>
+                  <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+                </select>
+                <div *ngIf="submitted && f['city'].errors" class="invalid-feedback">
+                  City is required
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="street" class="form-label">Street Address *</label>
+                <input 
+                  type="text" 
+                  id="street"
+                  formControlName="street" 
+                  class="form-control"
+                  [class.is-invalid]="submitted && f['street'].errors"
+                  placeholder="e.g., 123 Tahrir Street"
+                >
+                <div *ngIf="submitted && f['street'].errors" class="invalid-feedback">
+                  Street address is required
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Images Section -->
+        <div class="form-section">
+          <h3 class="section-title">Property Images</h3>
+          
+          <div class="mb-3">
+            <label for="images" class="form-label">Upload Images (Max 10) *</label>
+            <input 
+              type="file" 
+              id="images"
+              class="form-control"
+              accept="image/*"
+              multiple
+              (change)="onImageFilesSelected($event)"
+            >
+            <div class="form-text">Select multiple images to showcase your property. Supported formats: JPG, PNG, WebP</div>
+          </div>
+
+          <!-- Image Previews -->
+          <div *ngIf="imagePreviews.length > 0" class="image-previews">
+            <div class="row g-3">
+              <div class="col-md-3" *ngFor="let preview of imagePreviews; let i = index">
+                <div class="image-preview-card">
+                  <img [src]="preview" class="img-fluid rounded" alt="Property image">
+                  <button type="button" class="btn btn-danger btn-sm remove-btn" (click)="removeImage(i)">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amenities Section -->
+        <div class="form-section">
+          <h3 class="section-title">Amenities & Features</h3>
+          
+          <!-- Internal Amenities -->
+          <div class="amenities-group">
+            <h5 class="amenities-subtitle">Internal Amenities</h5>
+            <div class="row">
+              <div class="col-md-4" *ngFor="let amenity of internalAmenities">
+                <div class="form-check mb-2">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    [id]="'internal-' + amenity.amenityId"
+                    [checked]="isAmenitySelected(amenity.amenityId, 'internal')"
+                    (change)="onAmenityChange($event, amenity.amenityId, 'internal')"
+                  >
+                  <label class="form-check-label" [for]="'internal-' + amenity.amenityId">
+                    {{ amenity.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- External Amenities -->
+          <div class="amenities-group">
+            <h5 class="amenities-subtitle">External Amenities</h5>
+            <div class="row">
+              <div class="col-md-4" *ngFor="let amenity of externalAmenities">
+                <div class="form-check mb-2">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    [id]="'external-' + amenity.amenityId"
+                    [checked]="isAmenitySelected(amenity.amenityId, 'external')"
+                    (change)="onAmenityChange($event, amenity.amenityId, 'external')"
+                  >
+                  <label class="form-check-label" [for]="'external-' + amenity.amenityId">
+                    {{ amenity.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accessibility Features -->
+          <div class="amenities-group">
+            <h5 class="amenities-subtitle">Accessibility Features</h5>
+            <div class="row">
+              <div class="col-md-4" *ngFor="let amenity of accessibilityAmenities">
+                <div class="form-check mb-2">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    [id]="'accessibility-' + amenity.amenityId"
+                    [checked]="isAmenitySelected(amenity.amenityId, 'accessibility')"
+                    (change)="onAmenityChange($event, amenity.amenityId, 'accessibility')"
+                  >
+                  <label class="form-check-label" [for]="'accessibility-' + amenity.amenityId">
+                    {{ amenity.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Notice Section -->
+        <div class="form-section payment-notice">
+          <div class="payment-info-card">
+            <div class="d-flex align-items-center">
+              <div class="payment-icon">
+                <i class="bi bi-credit-card"></i>
+              </div>
+              <div class="payment-content">
+                <h5>Property Listing Fee</h5>
+                <p class="mb-0">A one-time fee of <strong>${{ paymentAmount }}</strong> is required to list your property on our platform.</p>
+                <small class="text-muted">Secure payment powered by Stripe</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="form-section">
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary" (click)="goBack()" [disabled]="isSubmitting">
+              Cancel
+            </button>
+            
+            <button type="submit" class="btn btn-primary btn-lg" [disabled]="isSubmitting">
+              <span *ngIf="!isSubmitting">
+                <i class="bi bi-credit-card"></i> Proceed to Payment
+              </span>
+              <span *ngIf="isSubmitting">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Processing...
+              </span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal" [class.show]="showPaymentModal" [style.display]="showPaymentModal ? 'block' : 'none'">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-credit-card"></i>
+          Complete Payment
+        </h5>
+        <button type="button" class="btn-close" (click)="onPaymentCancel()"></button>
+      </div>
+      <div class="modal-body p-0">
+        <app-payment
+          [showPayment]="showPaymentModal"
+          [paymentAmount]="paymentAmount"
+          (paymentSuccess)="onPaymentSuccess($event)"
+          (paymentCancel)="onPaymentCancel()">
+        </app-payment>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop" 
+     [class.show]="showPaymentModal" 
+     [style.display]="showPaymentModal ? 'block' : 'none'"
+     (click)="onPaymentCancel()">
+</div>
+

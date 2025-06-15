@@ -1,0 +1,412 @@
+<!-- Alert Component -->
+<div class="alert-container" *ngIf="showAlert">
+  <div class="alert" [ngClass]="{
+    'alert-success': alertType === 'success',
+    'alert-error': alertType === 'error',
+    'alert-info': alertType === 'info'
+  }">
+    {{ alertMessage }}
+  </div>
+</div>
+
+<!-- Header/Navigation -->
+<header class="py-3">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="logo">
+        <h2 class="fw-bold">X-rental</h2>
+      </div>
+      <div class="nav-links">
+        <ul class="list-unstyled d-flex gap-4 mb-0">
+          <li>
+            <a [routerLink]="isLoggedIn ? ['/add-property'] : null" 
+               (click)="!isLoggedIn && showLoginAlert()" 
+               class="text-decoration-none text-dark pointer">Add new property</a>
+          </li>
+          <li>
+            <a [routerLink]="isLoggedIn ? ['/favorites'] : null" 
+               (click)="!isLoggedIn && showLoginAlert()" 
+               class="text-decoration-none text-dark pointer">Favorite</a>
+          </li>
+          <li><a href="#" class="text-decoration-none text-dark">about Us</a></li>
+          <li>
+            <a [routerLink]="isLoggedIn ? ['/chat-bot'] : null" 
+               (click)="!isLoggedIn && showLoginAlert()" 
+               class="text-decoration-none text-dark pointer">chat Bot</a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Show auth buttons for guests or user profile for logged in users -->
+      <div *ngIf="!isLoggedIn" class="auth-buttons">
+        <a [routerLink]="['/sign-up']" class="btn btn-outline-dark rounded-pill me-2">sign up</a>
+        <a [routerLink]="['/log-in']" class="btn btn-primary rounded-pill">login</a>
+      </div>
+      
+      <div *ngIf="isLoggedIn" class="user-profile d-flex align-items-center">
+        <span class="me-2">Welcome, {{ userName }}</span>
+        <div class="dropdown">
+          <a href="#" class="dropdown-toggle text-decoration-none" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="assets/images/profile.jpeg" alt="Profile" class="rounded-circle" width="40" height="40">
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li><a class="dropdown-item" [routerLink]="['/profile']">My Profile</a></li>
+            <li><a class="dropdown-item" [routerLink]="['/my-properties']">My Properties</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item pointer" (click)="logout()">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero Section with Search -->
+<section class="hero-section position-relative">
+  <div class="hero-image">
+    <!-- Background image will be applied via CSS -->
+  </div>
+  <div class="container">
+    <div class="search-container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="search-bar-container bg-white rounded-pill shadow mt-5 p-2">
+            <div class="d-flex align-items-center">
+              <!-- Property Type Filters -->
+              <div class="property-filters d-flex me-auto ms-3">
+                <button class="btn btn-sm me-2" [ngClass]="{'btn-primary': selectedFilter === 'All', 'btn-link text-dark': selectedFilter !== 'All'}" 
+                        (click)="filterByType('All')">All</button>
+                <button class="btn btn-sm me-2" [ngClass]="{'btn-primary': selectedFilter === 'Apartment', 'btn-link text-dark': selectedFilter !== 'Apartment'}" 
+                        (click)="filterByType('Apartment')">Apartment</button>
+                <button class="btn btn-sm me-2" [ngClass]="{'btn-primary': selectedFilter === 'House', 'btn-link text-dark': selectedFilter !== 'House'}" 
+                        (click)="filterByType('House')">House</button>
+                <button class="btn btn-sm me-2" [ngClass]="{'btn-primary': selectedFilter === 'Office', 'btn-link text-dark': selectedFilter !== 'Office'}" 
+                        (click)="filterByType('Office')">Office</button>
+                <button class="btn btn-sm me-2" [ngClass]="{'btn-primary': selectedFilter === 'Villa', 'btn-link text-dark': selectedFilter !== 'Villa'}" 
+                        (click)="filterByType('Villa')">Villa</button>
+              </div>
+              
+              <!-- Search Input -->
+              <div class="search-input d-flex align-items-center">
+                <input type="text" class="form-control form-control-sm border-0" placeholder="Search properties..." 
+                       [(ngModel)]="searchQuery" (keyup.enter)="searchProperties()">
+                <button class="btn btn-primary btn-sm rounded-pill ms-2" (click)="searchProperties()" [disabled]="isLoading">
+                  <i class="bi bi-search"></i> Search
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Property Listings -->
+<section class="property-listings py-5">
+  <div class="container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3">Loading properties...</p>
+    </div>
+
+    <!-- Properties Grid -->
+    <div *ngIf="!isLoading" class="row g-4 justify-content-center">
+      <!-- No Properties Found -->
+      <div *ngIf="filteredProperties.length === 0" class="col-12 text-center py-5">
+        <i class="bi bi-house" style="font-size: 4rem; color: #ccc;"></i>
+        <h3 class="mt-3">No Properties Found</h3>
+        <p class="text-muted">Try adjusting your search criteria or browse all properties.</p>
+        <button class="btn btn-primary" (click)="filterByType('All')">Show All Properties</button>
+      </div>
+<!-- Property Cards -->
+      <div class="col-md-6 col-lg-4 mb-4" *ngFor="let property of filteredProperties; trackBy: trackByPropertyId">
+        <div class="property-card border-0 shadow-sm">
+          <div class="position-relative">
+            <img 
+              [src]="getFirstImage(property)" 
+              class="property-img" 
+              [alt]="property.title"
+              (error)="onImageError($event)"
+              loading="lazy"
+            >
+            <!-- Property Type Badge -->
+            <span class="badge bg-primary position-absolute top-0 start-0 m-2">{{ property.propertyType }}</span>
+            <!-- NO HEART HERE - removed from image -->
+          </div>
+          <div class="property-info p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <h5 class="mb-1">{{ property.title }}</h5>
+                <p class="text-muted mb-0 small">
+                  <i class="bi bi-geo-alt"></i> {{ property.street }}, {{ property.city }}
+                </p>
+              </div>
+              <div>
+                <h5 class="text-end text-primary">{{ formatPrice(property.price) }}</h5>
+              </div>
+            </div>
+            
+            <div class="property-details mt-3">
+              <div class="row text-center g-0">
+                <div class="col">
+                  <p class="fw-bold mb-0">Size</p>
+                  <p class="small">{{ property.size }} m²</p>
+                </div>
+                <div class="col">
+                  <p class="fw-bold mb-0">Beds</p>
+                  <p class="small">{{ property.bedrooms }}</p>
+                </div>
+                <div class="col">
+                  <p class="fw-bold mb-0">Baths</p>
+                  <p class="small">{{ property.bathrooms }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Action Buttons Row -->
+            <div class="mt-3 d-flex gap-2">
+              <button 
+                class="btn btn-primary rounded-pill flex-grow-1" 
+                (click)="viewProperty(property.propertyId)"
+              >
+                View Details
+              </button>
+              
+              <!-- Heart Button - Bottom Right -->
+              <button 
+                class="btn rounded-pill heart-btn" 
+                [ngClass]="{
+                  'btn-outline-secondary': !property.isFavorite,
+                  'btn-danger': property.isFavorite
+                }"
+                (click)="toggleFavorite(property.propertyId)"
+                [title]="property.isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+              >
+                <i class="bi" 
+                   [ngClass]="{
+                     'bi-heart': !property.isFavorite,
+                     'bi-heart-fill': property.isFavorite
+                   }">
+                </i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && filteredProperties.length > 0 && totalPages > 1" class="d-flex justify-content-center mt-5">
+      <nav aria-label="Properties pagination">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          </li>
+          
+          <li class="page-item" *ngIf="currentPage > 3">
+            <button class="page-link" (click)="goToPage(1)">1</button>
+          </li>
+          
+          <li class="page-item disabled" *ngIf="currentPage > 4">
+            <span class="page-link">...</span>
+          </li>
+          
+          <li class="page-item" *ngFor="let page of getPaginationArray()" [class.active]="page === currentPage">
+            <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+          </li>
+          
+          <li class="page-item disabled" *ngIf="currentPage < totalPages - 3">
+            <span class="page-link">...</span>
+          </li>
+          
+          <li class="page-item" *ngIf="currentPage < totalPages - 2">
+            <button class="page-link" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+          </li>
+          
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Results Summary -->
+    <div *ngIf="!isLoading && filteredProperties.length > 0" class="text-center mt-3">
+      <p class="text-muted">
+        Showing {{ ((currentPage - 1) * pageSize) + 1 }} - {{ Math.min(currentPage * pageSize, totalCount) }} 
+        of {{ totalCount }} properties
+      </p>
+    </div>
+  </div>
+
+
+<!-- Additional CSS for pagination and improved styling -->
+<!-- Additional CSS for heart button and property cards -->
+<style>
+  .pagination .page-link {
+    color: #08227B;
+    border-color: #08227B;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: #08227B;
+    border-color: #08227B;
+  }
+  
+  .pagination .page-link:hover {
+    background-color: rgba(8, 34, 123, 0.1);
+    border-color: #08227B;
+  }
+  
+  .property-card {
+    border-radius: 20px !important;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+  }
+  
+  .property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .property-img {
+    height: 220px;
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  .property-info {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 220px);
+  }
+  
+  .property-details {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    margin: auto 0;
+  }
+  
+  .btn-primary {
+    background-color: #08227B;
+    border-color: #08227B;
+  }
+  
+  .btn-primary:hover {
+    background-color: #061a5f;
+    border-color: #061a5f;
+  }
+  
+  .text-primary {
+    color: #08227B !important;
+  }
+  
+  /* Heart Button Styles */
+  .heart-btn {
+    min-width: 45px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border-width: 1px;
+  }
+  
+  .heart-btn:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Not favorited state - gray outline */
+  .heart-btn.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+    background-color: transparent;
+  }
+  
+  .heart-btn.btn-outline-secondary:hover {
+    color: #dc3545;
+    border-color: #dc3545;
+    background-color: transparent;
+  }
+  
+  .heart-btn.btn-outline-secondary:hover i {
+    color: #dc3545;
+  }
+  
+  /* Favorited state - red filled */
+  .heart-btn.btn-danger {
+    color: white;
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .heart-btn.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+  }
+  
+  /* Heart icon transitions */
+  .heart-btn i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .property-filters {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      width: 100%;
+      justify-content: flex-start;
+      padding-bottom: 5px;
+    }
+    
+    .search-bar-container {
+      flex-direction: column;
+    }
+    
+    .search-input {
+      width: 100%;
+      margin-top: 10px;
+      padding: 0 15px;
+    }
+    
+    .pagination {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .property-card {
+      margin-bottom: 1rem;
+    }
+    
+    .heart-btn {
+      min-width: 40px;
+      height: 35px;
+    }
+  }
+</style>

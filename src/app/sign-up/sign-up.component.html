@@ -1,0 +1,281 @@
+<!-- Signup Component HTML with loading states -->
+<div class="container">
+    <!-- Left side (Form inputs) -->
+    <div class="form-side">
+      <div class="form-container">
+        <h1 class="title">Sign Up</h1>
+  
+        <form (ngSubmit)="onSubmit()" [formGroup]="signupForm">
+          <!-- Name inputs in a row -->
+          <div class="form-row">
+            <div class="form-group half">
+              <label for="firstName">First Name</label>
+              <input 
+                type="text" 
+                id="firstName"
+                formControlName="firstName" 
+                placeholder="ex: Ahmed"
+                class="form-control"
+                [ngClass]="{'invalid': submitted && f['firstName'].errors}"
+                [disabled]="isLoading"
+              >
+              <div *ngIf="submitted && f['firstName'].errors" class="error-message">
+                <div *ngIf="f['firstName'].errors['required']">First name is required</div>
+                <div *ngIf="f['firstName'].errors['minlength']">First name must be at least 2 characters</div>
+              </div>
+            </div>
+  
+            <div class="form-group half">
+              <label for="lastName">Last Name</label>
+              <input 
+                type="text" 
+                id="lastName"
+                formControlName="lastName" 
+                placeholder="ex: Wagdy"
+                class="form-control"
+                [ngClass]="{'invalid': submitted && f['lastName'].errors}"
+                [disabled]="isLoading"
+              >
+              <div *ngIf="submitted && f['lastName'].errors" class="error-message">
+                <div *ngIf="f['lastName'].errors['required']">Last name is required</div>
+                <div *ngIf="f['lastName'].errors['minlength']">Last name must be at least 2 characters</div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Email input -->
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email"
+              formControlName="email" 
+              placeholder="ex: ahmedwagdy@email.com"
+              class="form-control"
+              [ngClass]="{'invalid': submitted && f['email'].errors}"
+              [disabled]="isLoading"
+            >
+            <div *ngIf="submitted && f['email'].errors" class="error-message">
+              <div *ngIf="f['email'].errors['required']">Email is required</div>
+              <div *ngIf="f['email'].errors['email']">Enter a valid email</div>
+            </div>
+          </div>
+  
+          <!-- Phone number with country code -->
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <div class="phone-input">
+              <div class="country-code">
+                <select formControlName="countryCode" class="code-select" [disabled]="isLoading">
+                  <option value="+20">+20</option>
+                  <option value="+1">+1</option>
+                  <option value="+44">+44</option>
+                  <option value="+33">+33</option>
+                  <option value="+49">+49</option>
+                </select>
+              </div>
+              <input 
+                type="tel" 
+                id="phone"
+                formControlName="phone" 
+                placeholder="ex: 1007559638"
+                class="form-control phone"
+                [ngClass]="{'invalid': submitted && f['phone'].errors}"
+                [disabled]="isLoading"
+              >
+            </div>
+            <div *ngIf="submitted && f['phone'].errors" class="error-message">
+              <div *ngIf="f['phone'].errors['required']">Phone number is required</div>
+              <div *ngIf="f['phone'].errors['pattern']">Enter a valid phone number (10-11 digits)</div>
+            </div>
+          </div>
+  
+          <!-- City dropdown -->
+          <div class="form-group">
+            <label for="city">City</label>
+            <div class="dropdown">
+              <select formControlName="city" id="city" class="form-control" [disabled]="isLoading">
+                <option value="" disabled selected>ex: Cairo</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Alexandria">Alexandria</option>
+                <option value="Giza">Giza</option>
+                <option value="Luxor">Luxor</option>
+                <option value="Aswan">Aswan</option>
+                <option value="Sharm El Sheikh">Sharm El Sheikh</option>
+                <option value="Hurghada">Hurghada</option>
+              </select>
+            </div>
+            <div *ngIf="submitted && f['city'].errors" class="error-message">
+              <div *ngIf="f['city'].errors['required']">City is required</div>
+            </div>
+          </div>
+  
+          <!-- Date of birth -->
+          <!-- Date of birth -->
+          <div class="form-group">
+            <label for="dob">Birth of date</label>
+            <div class="date-input">
+              <input 
+                type="date" 
+                id="dob"
+                formControlName="dob" 
+                class="form-control"
+                [ngClass]="{'invalid': submitted && f['dob'].errors}"
+                [disabled]="isLoading"
+              >
+              <div class="calendar-icon">
+                <i class="bi bi-calendar"></i>
+              </div>
+            </div>
+            <div *ngIf="submitted && f['dob'].errors" class="error-message">
+              <div *ngIf="f['dob'].errors['required']">Date of birth is required</div>
+            </div>
+          </div>
+  
+          <!-- Password input -->
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-input">
+              <input 
+                [type]="showPassword ? 'text' : 'password'" 
+                id="password"
+                formControlName="password" 
+                placeholder="••••••••"
+                class="form-control"
+                [ngClass]="{'invalid': submitted && f['password'].errors}"
+                [disabled]="isLoading"
+              >
+              <div class="toggle-password" (click)="togglePasswordVisibility()" *ngIf="!isLoading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path *ngIf="!showPassword" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <path *ngIf="showPassword" d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <circle *ngIf="!showPassword" cx="12" cy="12" r="3"></circle>
+                  <line *ngIf="showPassword" x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="submitted && f['password'].errors" class="error-message">
+              <div *ngIf="f['password'].errors['required']">Password is required</div>
+              <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+            </div>
+          </div>
+  
+          <!-- Confirm password input -->
+          <div class="form-group">
+            <label for="confirmPassword">Confirm password</label>
+            <div class="password-input">
+              <input 
+                [type]="showConfirmPassword ? 'text' : 'password'" 
+                id="confirmPassword"
+                formControlName="confirmPassword" 
+                placeholder="••••••••"
+                class="form-control"
+                [ngClass]="{'invalid': submitted && f['confirmPassword'].errors}"
+                [disabled]="isLoading"
+              >
+              <div class="toggle-password" (click)="toggleConfirmPasswordVisibility()" *ngIf="!isLoading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path *ngIf="!showConfirmPassword" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <path *ngIf="showConfirmPassword" d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <circle *ngIf="!showConfirmPassword" cx="12" cy="12" r="3"></circle>
+                  <line *ngIf="showConfirmPassword" x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="submitted && f['confirmPassword'].errors" class="error-message">
+              <div *ngIf="f['confirmPassword'].errors['required']">Confirm password is required</div>
+              <div *ngIf="f['confirmPassword'].errors['matching']">Passwords must match</div>
+            </div>
+          </div>
+  
+          <!-- Terms checkbox -->
+          <div class="form-group terms-group">
+            <div class="checkbox-container">
+              <input 
+                type="checkbox" 
+                id="terms"
+                formControlName="terms" 
+                class="checkbox"
+                [disabled]="isLoading"
+              >
+              <label for="terms" class="terms-label">I understood the <span class="terms-link">terms & policy</span>.</label>
+            </div>
+            <div *ngIf="submitted && f['terms'].errors" class="error-message">
+              <div *ngIf="f['terms'].errors['required']">You must accept the terms and policy</div>
+            </div>
+          </div>
+          
+          <!-- Sign up button -->
+          <button type="submit" class="signup-btn" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Sign up</span>
+            <span *ngIf="isLoading">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin">
+                <line x1="12" y1="2" x2="12" y2="6"></line>
+                <line x1="12" y1="18" x2="12" y2="22"></line>
+                <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                <line x1="2" y1="12" x2="6" y2="12"></line>
+                <line x1="18" y1="12" x2="22" y2="12"></line>
+                <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+                <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+              </svg>
+              Creating account...
+            </span>
+          </button>
+        </form>
+  
+        <!-- Google sign up -->
+        <div class="google-signup">
+          <button class="google-btn" (click)="signupWithGoogle()" [disabled]="isLoading">
+            <img src="../../assets/images/google.png" alt="Google">
+            Sign up with Google
+          </button>
+        </div>
+  
+        <!-- Login link -->
+        <div class="login-link">
+          <span>Do you have an account?</span>
+          <a [routerLink]="['/log-in']" *ngIf="!isLoading">Login</a>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Right side (Blue background with image) -->
+    <div class="image-side">
+      <div class="close-button">
+        <button class="close-btn" (click)="goToHome()">✕</button>
+      </div>
+      <div class="image-container">
+        <img src="../../assets/images/signup.png" alt="Sign up illustration">
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add CSS for loading animation -->
+  <style>
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .signup-btn:disabled,
+    .google-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .form-control:disabled,
+    .code-select:disabled,
+    .checkbox:disabled {
+      background-color: #f5f5f5;
+      opacity: 0.6;
+    }
+  </style>

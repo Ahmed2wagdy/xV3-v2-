@@ -1,0 +1,426 @@
+<!-- Profile Component HTML -->
+<div class="profile-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading profile...</p>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!isLoading" class="container py-4">
+    <!-- Profile Header -->
+    <div class="profile-header mb-4">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <div class="profile-image-container">
+            <img 
+              [src]="getUserImageUrl()" 
+              alt="Profile Picture" 
+              class="profile-image"
+              onerror="this.src='assets/images/unknown.png'"
+            >
+          </div>
+        </div>
+        <div class="col">
+          <h2 class="user-name">{{ getUserFullName() }}</h2>
+        </div>
+        <div class="col-auto">
+          <div class="header-actions">
+            <button class="action-btn edit-btn" (click)="openEditModal()" title="Edit Profile">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="action-btn logout-btn" (click)="logout()" title="Sign Out">
+              <i class="bi bi-box-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Section -->
+    <div class="section-container mb-4">
+      <h3 class="section-title">
+        <i class="bi bi-person-circle"></i> Account
+      </h3>
+      <div class="menu-items">
+        <div class="menu-item" (click)="navigateToAddProperty()">
+          <div class="menu-icon">
+            <i class="bi bi-house-add"></i>
+          </div>
+          <div class="menu-content">
+            <h5>Upload Your Property</h5>
+            <p>Add a new property to the platform</p>
+          </div>
+          <div class="menu-arrow">
+            <i class="bi bi-chevron-right"></i>
+          </div>
+        </div>
+
+        <div class="menu-item" (click)="openEditModal()">
+          <div class="menu-icon">
+            <i class="bi bi-person-gear"></i>
+          </div>
+          <div class="menu-content">
+            <h5>Edit Profile</h5>
+            <p>Update your personal information</p>
+          </div>
+          <div class="menu-arrow">
+            <i class="bi bi-chevron-right"></i>
+          </div>
+        </div>
+
+        <div class="menu-item" (click)="openPasswordModal()">
+          <div class="menu-icon">
+            <i class="bi bi-lock"></i>
+          </div>
+          <div class="menu-content">
+            <h5>Change Password</h5>
+            <p>Update your account password</p>
+          </div>
+          <div class="menu-arrow">
+            <i class="bi bi-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- More Section -->
+    <div class="section-container mb-4">
+      <h3 class="section-title">
+        <i class="bi bi-three-dots"></i> More
+      </h3>
+      <div class="menu-items">
+        <div class="menu-item" (click)="showAboutUs()">
+          <div class="menu-icon">
+            <i class="bi bi-info-circle"></i>
+          </div>
+          <div class="menu-content">
+            <h5>About Us</h5>
+            <p>Learn more about X-Rental platform</p>
+          </div>
+          <div class="menu-arrow">
+            <i class="bi bi-chevron-right"></i>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <div class="menu-icon">
+            <i class="bi bi-moon"></i>
+          </div>
+          <div class="menu-content">
+            <h5>Dark Mode</h5>
+            <p>Switch between light and dark theme</p>
+          </div>
+          <div class="menu-toggle">
+            <div class="form-check form-switch">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="darkModeSwitch"
+                [checked]="isDarkMode"
+                (change)="toggleDarkMode()"
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item">
+          <div class="menu-icon">
+            <i class="bi bi-globe"></i>
+          </div>
+          <div class="menu-content">
+            <h5>Language</h5>
+            <p>العربية - Arabic</p>
+          </div>
+          <div class="menu-badge">
+            <span class="badge bg-secondary">Static</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Account Section -->
+    <div class="section-container delete-section">
+      <div class="delete-account-item" (click)="deleteAccount()">
+        <div class="menu-icon text-danger">
+          <i class="bi bi-trash"></i>
+        </div>
+        <div class="menu-content">
+          <h5 class="text-danger">Delete Account</h5>
+          <p class="text-muted">Permanently delete your account and data</p>
+        </div>
+        <div class="menu-arrow text-danger">
+          <i class="bi bi-chevron-right"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal" [class.show]="showEditModal" [style.display]="showEditModal ? 'block' : 'none'">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-person-gear"></i> Edit Profile
+          </h5>
+          <button type="button" class="btn-close" (click)="closeEditModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
+            <!-- Profile Image Section -->
+            <div class="text-center mb-4">
+              <div class="edit-image-section">
+                <div class="edit-image-container">
+                  <!-- الطبقة الأولى (السفلى): الصورة الافتراضية - z-index: 1 -->
+                  <img 
+                    src="assets/images/unkown.png" 
+                    alt="Profile Picture" 
+                    class="edit-profile-image default-image"
+                  >
+                  <!-- الطبقة الثانية (الوسطى): صورة المستخدم - z-index: 2 -->
+                  <img 
+                    *ngIf="hasUserImage()"
+                    [src]="getUserActualImageUrl()" 
+                    alt="User Profile Picture" 
+                    class="edit-profile-image user-image"
+                    onerror="this.style.display='none'"
+                  >
+                </div>
+                
+                <!-- أيقونات بجانب الصورة -->
+                <div class="image-actions">
+                  <label for="profileImageInput" class="image-action-btn upload-btn" title="Change Photo">
+                    <i class="bi bi-camera"></i>
+                  </label>
+                  <button 
+                    type="button" 
+                    class="image-action-btn remove-btn" 
+                    *ngIf="hasUserImage()"
+                    (click)="removeProfileImage()"
+                    title="Remove Photo"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <input 
+                type="file" 
+                id="profileImageInput"
+                class="d-none"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+              >
+              <div class="mt-2">
+                <div *ngIf="selectedFile" class="text-success">
+                  <small>
+                    <i class="bi bi-check-circle"></i> New image selected: {{ selectedFile.name }}
+                  </small>
+                </div>
+                <div *ngIf="isImageDeleted" class="text-warning">
+                  <small>
+                    <i class="bi bi-exclamation-triangle"></i> Profile picture will be removed
+                  </small>
+                </div>
+                <div *ngIf="!selectedFile && !isImageDeleted && !hasUserImage()" class="text-muted">
+                  <small>Click camera icon to add your photo</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="firstName" class="form-label">First Name *</label>
+                  <input 
+                    type="text" 
+                    id="firstName"
+                    formControlName="firstName" 
+                    class="form-control"
+                    [class.is-invalid]="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched"
+                  >
+                  <div *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched" class="invalid-feedback">
+                    <div *ngIf="profileForm.get('firstName')?.errors?.['required']">First name is required</div>
+                    <div *ngIf="profileForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="lastName" class="form-label">Last Name *</label>
+                  <input 
+                    type="text" 
+                    id="lastName"
+                    formControlName="lastName" 
+                    class="form-control"
+                    [class.is-invalid]="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched"
+                  >
+                  <div *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched" class="invalid-feedback">
+                    <div *ngIf="profileForm.get('lastName')?.errors?.['required']">Last name is required</div>
+                    <div *ngIf="profileForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email *</label>
+                  <input 
+                    type="email" 
+                    id="email"
+                    formControlName="email" 
+                    class="form-control"
+                    [class.is-invalid]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+                  >
+                  <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="invalid-feedback">
+                    <div *ngIf="profileForm.get('email')?.errors?.['required']">Email is required</div>
+                    <div *ngIf="profileForm.get('email')?.errors?.['email']">Please enter a valid email</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="phoneNumber" class="form-label">Phone Number</label>
+                  <input 
+                    type="tel" 
+                    id="phoneNumber"
+                    formControlName="phoneNumber" 
+                    class="form-control"
+                    [class.is-invalid]="profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched"
+                  >
+                  <div *ngIf="profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched" class="invalid-feedback">
+                    Please enter a valid phone number
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="city" class="form-label">City</label>
+              <select formControlName="city" id="city" class="form-select">
+                <option value="">Select city</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Alexandria">Alexandria</option>
+                <option value="Giza">Giza</option>
+                <option value="Luxor">Luxor</option>
+                <option value="Aswan">Aswan</option>
+                <option value="Sharm El Sheikh">Sharm El Sheikh</option>
+                <option value="Hurghada">Hurghada</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+          <button 
+            type="button" 
+            class="btn btn-primary"
+            [disabled]="isUpdatingProfile || profileForm.invalid"
+            (click)="onUpdateProfile()"
+          >
+            <span *ngIf="!isUpdatingProfile">
+              <i class="bi bi-check-circle"></i> Update Profile
+            </span>
+            <span *ngIf="isUpdatingProfile">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Updating...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal" [class.show]="showPasswordModal" [style.display]="showPasswordModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-lock"></i> Change Password
+          </h5>
+          <button type="button" class="btn-close" (click)="closePasswordModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+            <div class="mb-3">
+              <label for="oldPassword" class="form-label">Current Password *</label>
+              <input 
+                type="password" 
+                id="oldPassword"
+                formControlName="oldPassword" 
+                class="form-control"
+                [class.is-invalid]="passwordForm.get('oldPassword')?.invalid && passwordForm.get('oldPassword')?.touched"
+              >
+              <div *ngIf="passwordForm.get('oldPassword')?.invalid && passwordForm.get('oldPassword')?.touched" class="invalid-feedback">
+                Current password is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password *</label>
+              <input 
+                type="password" 
+                id="newPassword"
+                formControlName="newPassword" 
+                class="form-control"
+                [class.is-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
+              >
+              <div *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" class="invalid-feedback">
+                <div *ngIf="passwordForm.get('newPassword')?.errors?.['required']">New password is required</div>
+                <div *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Password must be at least 6 characters</div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="confirmNewPassword" class="form-label">Confirm New Password *</label>
+              <input 
+                type="password" 
+                id="confirmNewPassword"
+                formControlName="confirmNewPassword" 
+                class="form-control"
+                [class.is-invalid]="passwordForm.get('confirmNewPassword')?.invalid && passwordForm.get('confirmNewPassword')?.touched"
+              >
+              <div *ngIf="passwordForm.get('confirmNewPassword')?.invalid && passwordForm.get('confirmNewPassword')?.touched" class="invalid-feedback">
+                <div *ngIf="passwordForm.get('confirmNewPassword')?.errors?.['required']">Please confirm your password</div>
+                <div *ngIf="passwordForm.get('confirmNewPassword')?.errors?.['mismatch']">Passwords do not match</div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closePasswordModal()">Cancel</button>
+          <button 
+            type="button" 
+            class="btn btn-warning"
+            [disabled]="isChangingPassword || passwordForm.invalid"
+            (click)="onChangePassword()"
+          >
+            <span *ngIf="!isChangingPassword">
+              <i class="bi bi-key"></i> Change Password
+            </span>
+            <span *ngIf="isChangingPassword">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Changing...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop" 
+       [class.show]="showEditModal || showPasswordModal" 
+       [style.display]="(showEditModal || showPasswordModal) ? 'block' : 'none'"
+       (click)="closeEditModal(); closePasswordModal()">
+  </div>
+</div>
+

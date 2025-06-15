@@ -1,0 +1,103 @@
+<div class="container">
+    <!-- Right side (Blue background with image) -->
+    <div class="image-side">
+      <div class="close-button">
+        <button class="close-btn">✕</button>
+      </div>
+      <div class="image-container">
+        <img src="../../assets/images/otp.png" alt="OTP verification illustration">
+      </div>
+    </div>
+  
+    <!-- Left side (Form inputs) -->
+    <div class="form-side">
+      <div class="form-container">
+        <h1 class="title">Enter OTP</h1>
+        <p class="subtitle">Enter the OTP code we just sent<br>you on your registered Email/Phone number</p>
+  
+        <!-- Progress steps -->
+        <div class="steps-container">
+          <div class="step completed">
+            <div class="step-number">1</div>
+          </div>
+          <div class="step-line completed"></div>
+          <div class="step active">
+            <div class="step-number">2</div>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <div class="step-number">3</div>
+          </div>
+        </div>
+  
+        <form (ngSubmit)="onSubmit()" [formGroup]="otpForm">
+          <!-- OTP input - Updated to 6 digits -->
+          <div class="otp-container">
+            <input 
+              type="text" 
+              maxlength="1" 
+              formControlName="digit1" 
+              class="otp-input"
+              (keyup)="moveToNext($event, 2)"
+              #digit1
+            >
+            <input 
+              type="text" 
+              maxlength="1" 
+              formControlName="digit2" 
+              class="otp-input"
+              (keyup)="moveToNext($event, 3)"
+              #digit2
+            >
+            <input 
+              type="text" 
+              maxlength="1" 
+              formControlName="digit3" 
+              class="otp-input"
+              (keyup)="moveToNext($event, 4)"
+              #digit3
+            >
+            <input 
+              type="text" 
+              maxlength="1" 
+              formControlName="digit4" 
+              class="otp-input"
+              (keyup)="moveToNext($event, 5)"
+              #digit4
+            >
+            <input 
+              type="text" 
+              maxlength="1" 
+              formControlName="digit5" 
+              class="otp-input"
+              (keyup)="moveToNext($event, 6)"
+              #digit5
+            >
+            <input 
+              type="text" 
+              maxlength="1" 
+              formControlName="digit6" 
+              class="otp-input"
+              (keyup)="moveToNext($event, 0)"
+              #digit6
+            >
+          </div>
+          
+          <div *ngIf="otpError" class="error-message text-center">
+            {{ otpError }}
+          </div>
+          
+          <!-- Submit button -->
+          <button type="submit" class="reset-btn" [disabled]="!isOtpComplete()">Reset Password</button>
+        </form>
+  
+        <!-- Resend OTP link -->
+        <div class="resend-container">
+          <span>Didn't get OTP? </span>
+          <button type="button" class="resend-btn" [disabled]="countdown > 0" (click)="resendOtp()">
+            {{ countdown > 0 ? 'Resend OTP in ' + countdown + 's' : 'Resend OTP' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

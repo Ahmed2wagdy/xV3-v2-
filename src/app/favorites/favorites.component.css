@@ -1,0 +1,52 @@
+.property-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .property-img {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .property-details {
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+  }
+  
+  .btn-primary {
+    background-color: #08227B;
+    border-color: #08227B;
+  }
+  
+  .btn-primary:hover {
+    background-color: #061a5f;
+    border-color: #061a5f;
+  }
+  
+  .text-primary {
+    color: #08227B !important;
+  }
+  
+  .badge.bg-primary {
+    background-color: #08227B !important;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  @media (max-width: 768px) {
+    .property-card {
+      margin-bottom: 1rem;
+    }
+    
+    .property-details .row {
+      text-align: center;
+    }
+  }

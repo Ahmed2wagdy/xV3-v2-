@@ -1,0 +1,34 @@
+/* أضف هذا في ملف styles.css العام للتطبيق */
+
+/* تحديد اللون الأساسي للتطبيق */
+:root {
+    --primary-color: #08227B;
+  }
+  
+  /* أنماط الأزرار الأساسية */
+  .btn-primary {
+    background-color: #08227B !important;
+    border-color: #08227B !important;
+    color: white !important;
+  }
+  
+  .btn-outline-primary {
+    color: #08227B !important;
+    border-color: #08227B !important;
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: #08227B !important;
+    border-color: #08227B !important;
+    color: white !important;
+  }
+  
+  /* تنسيقات SweetAlert2 */
+  .swal2-icon.swal2-info {
+    color: #08227B !important;
+    border-color: #08227B !important;
+  }
+  
+  .swal2-styled.swal2-confirm {
+    background-color: #08227B !important;
+  }

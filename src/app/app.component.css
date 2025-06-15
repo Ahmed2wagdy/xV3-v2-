@@ -1,0 +1,298 @@
+/* General styles for the signup page */
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Left side - Form inputs */
+  .form-side {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    overflow-y: auto;
+  }
+  
+  .form-container {
+    width: 100%;
+    max-width: 450px;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    color: #0c2b7a;
+    margin-bottom: 30px;
+    font-weight: bold;
+  }
+  
+  /* Form row for split inputs */
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .half {
+    width: 50%;
+  }
+  
+  label {
+    display: block;
+    font-size: 1rem;
+    color: #0c2b7a;
+    margin-bottom: 8px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: #0c2b7a;
+  }
+  
+  .form-control.invalid {
+    border-color: #ff3860;
+  }
+  
+  .error-message {
+    color: #ff3860;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  /* Phone input with country code */
+  .phone-input {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .country-code {
+    width: 80px;
+  }
+  
+  .code-select {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    background-color: white;
+  }
+  
+  .phone {
+    flex: 1;
+  }
+  
+  /* Dropdown styles */
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropdown select {
+    appearance: none;
+    width: 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6" viewBox="0 0 12 6"><path d="M0 0l6 6 6-6z" fill="%23666"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    padding-right: 30px;
+  }
+  
+  /* Date input styles */
+  .date-input {
+    position: relative;
+  }
+  
+  .calendar-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none;
+  }
+  
+  /* Password input styles */
+  .password-input {
+    position: relative;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #666;
+    cursor: pointer;
+  }
+  
+  /* Terms checkbox styles */
+  .terms-group {
+    margin-bottom: 30px;
+  }
+  
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .checkbox {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    accent-color: #0c2b7a;
+  }
+  
+  .terms-label {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .terms-link {
+    color: #0c2b7a;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  /* Signup button */
+  .signup-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #0c2b7a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+  }
+  
+  .signup-btn:hover {
+    background-color: #091e55;
+  }
+  
+  /* Google signup */
+  .google-signup {
+    margin-bottom: 20px;
+  }
+  
+  .google-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .google-btn:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .google-btn img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Login link */
+  .login-link {
+    text-align: center;
+    font-size: 16px;
+  }
+  
+  .login-link span {
+    color: #666;
+  }
+  
+  .login-link a {
+    color: #0c2b7a;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 5px;
+  }
+  
+  /* Right side - Blue background with image */
+  .image-side {
+    width: 50%;
+    background-color: #0c2b7a; /* Deep blue color from the design */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .image-container {
+    width: 70%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .image-container img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column-reverse;
+    }
+    
+    .image-side {
+      width: 100%;
+      height: 30vh;
+    }
+    
+    .form-side {
+      width: 100%;
+      height: 70vh;
+      padding: 20px;
+    }
+    
+    .form-row {
+      flex-direction: column;
+      gap: 0;
+    }
+    
+    .half {
+      width: 100%;
+    }
+  }

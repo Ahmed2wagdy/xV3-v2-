@@ -1,0 +1,490 @@
+.profile-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+}
+
+.profile-header {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden; /* Hide any overflow text */
+  border-radius: 50%; /* Make container circular to contain icons */
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #08227B;
+  box-shadow: 0 4px 15px rgba(8, 34, 123, 0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block; /* Ensure image display */
+}
+
+.profile-image.default-image {
+  position: relative;
+  opacity: 1;
+  z-index: 1; /* الطبقة السفلى - الصورة الافتراضية */
+}
+
+.profile-image.user-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2; /* الطبقة الوسطى - صورة المستخدم */
+}
+
+.header-image-actions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none; /* Allow clicks to pass through container */
+}
+
+.header-edit-btn,
+.header-remove-btn {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  pointer-events: auto; /* Enable clicks on buttons */
+}
+
+.header-edit-btn {
+  bottom: 5px;
+  right: 5px;
+  background: #08227B;
+  color: white;
+}
+
+.header-edit-btn:hover {
+  background: #061a5f;
+  transform: scale(1.1);
+}
+
+.header-remove-btn {
+  bottom: 5px;
+  left: 5px;
+  background: #dc3545;
+  color: white;
+}
+
+.header-remove-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.user-name {
+  color: #08227B;
+  font-weight: bold;
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  background: #28a745;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #218838;
+  transform: scale(1.1);
+}
+
+.logout-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.logout-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.section-container {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  color: #08227B;
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.menu-item:hover {
+  background: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #08227B;
+  margin-right: 15px;
+}
+
+.menu-content {
+  flex: 1;
+}
+
+.menu-content h5 {
+  margin: 0 0 5px 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.menu-content p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.menu-arrow {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.menu-toggle {
+  margin-right: 10px;
+}
+
+.menu-badge {
+  margin-right: 10px;
+}
+
+.form-check-input:checked {
+  background-color: #08227B;
+  border-color: #08227B;
+}
+
+.delete-section {
+  border: 2px solid #ffeeba;
+  background: #fff3cd;
+}
+
+.delete-account-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-account-item:hover {
+  background: rgba(220, 53, 69, 0.1);
+  transform: translateX(5px);
+}
+
+/* Modal Styles */
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block !important;
+}
+
+.modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  background: #08227B;
+  color: white;
+  border-radius: 15px 15px 0 0;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.btn-close {
+  filter: invert(1);
+}
+
+.edit-image-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden; /* Hide any overflow text */
+}
+
+.edit-profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #08227B;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block; /* Ensure image display */
+}
+
+.edit-profile-image.default-image {
+  position: relative;
+  opacity: 1;
+  z-index: 1; /* الطبقة السفلى - الصورة الافتراضية */
+}
+
+.edit-profile-image.user-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2; /* الطبقة الوسطى - صورة المستخدم */
+}
+
+.image-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: #08227B;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 3px solid white;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.image-upload-btn:hover {
+  background: #061a5f;
+  transform: scale(1.1);
+}
+
+.image-remove-btn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 3px solid white;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.image-remove-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.btn-primary {
+  background-color: #08227B;
+  border-color: #08227B;
+}
+
+.btn-primary:hover {
+  background-color: #061a5f;
+  border-color: #061a5f;
+}
+
+.form-control:focus {
+  border-color: #08227B;
+  box-shadow: 0 0 0 0.2rem rgba(8, 34, 123, 0.25);
+}
+
+.form-select:focus {
+  border-color: #08227B;
+  box-shadow: 0 0 0 0.2rem rgba(8, 34, 123, 0.25);
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .profile-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .profile-header,
+body.dark-mode .section-container {
+  background: #2d3748;
+  color: white;
+}
+
+body.dark-mode .menu-item:hover {
+  background: #4a5568;
+}
+
+body.dark-mode .menu-icon {
+  background: #4a5568;
+  color: #08227B;
+}
+
+body.dark-mode .menu-content h5 {
+  color: white;
+}
+
+body.dark-mode .menu-content p {
+  color: #a0aec0;
+}
+
+body.dark-mode .delete-section {
+  background: #744210;
+  border-color: #d69e2e;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 20px;
+  }
+  
+  .user-name {
+    font-size: 1.4rem;
+  }
+  
+  .profile-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .profile-image-container {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .edit-image-section {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .image-actions {
+    flex-direction: row;
+    gap: 10px;
+  }
+  
+  .edit-profile-image {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .edit-image-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .image-action-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .action-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 1rem;
+  }
+  
+  .menu-item {
+    padding: 15px;
+  }
+  
+  .menu-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+  
+  .section-container {
+    padding: 20px;
+  }
+}

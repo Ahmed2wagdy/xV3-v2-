@@ -1,0 +1,125 @@
+<!-- Login Component HTML with loading states -->
+<div class="container">
+    <!-- Left side (Blue background with image) -->
+    <div class="image-side">
+      <div class="close-button">
+        <button class="close-btn" (click)="router.navigate(['/home'])">✕</button>
+      </div>
+      <div class="image-container">
+        <img src="../../assets/images/login.png"  loading="lazy" width="400" height="250" alt="Property">
+      </div>
+    </div>
+  
+    <!-- Right side (Form inputs) -->
+    <div class="form-side">
+      <div class="form-container">
+        <h1 class="title">Login here</h1>
+        <p class="subtitle">Welcome back you've been missed!</p>
+  
+        <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
+          <!-- Email input -->
+          <div class="form-group">
+            <input 
+              type="email" 
+              formControlName="email" 
+              placeholder="Email"
+              class="form-control"
+              [ngClass]="{'invalid': submitted && f['email'].errors}"
+              [disabled]="isLoading"
+            >
+            <div *ngIf="submitted && f['email'].errors" class="error-message">
+              <div *ngIf="f['email'].errors['required']">Email is required</div>
+              <div *ngIf="f['email'].errors['email']">Enter a valid email</div>
+            </div>
+          </div>
+  
+          <!-- Password input -->
+          <div class="form-group">
+            <div class="password-input">
+              <input 
+                [type]="showPassword ? 'text' : 'password'" 
+                formControlName="password" 
+                placeholder="Password"
+                class="form-control"
+                [ngClass]="{'invalid': submitted && f['password'].errors}"
+                [disabled]="isLoading"
+              >
+              <div class="toggle-password" (click)="togglePasswordVisibility()" *ngIf="!isLoading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path *ngIf="!showPassword" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <path *ngIf="showPassword" d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <circle *ngIf="!showPassword" cx="12" cy="12" r="3"></circle>
+                  <line *ngIf="showPassword" x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </div>
+            </div>
+            <div *ngIf="submitted && f['password'].errors" class="error-message">
+              <div *ngIf="f['password'].errors['required']">Password is required</div>
+            </div>
+          </div>
+  
+          <!-- Forgot password link -->
+          <div class="forgot-password">
+            <a [routerLink]="['/forget-pass']" *ngIf="!isLoading">Forgot your password?</a>
+          </div>
+  
+          <!-- Login button -->
+          <button type="submit" class="login-btn" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Sign in</span>
+            <span *ngIf="isLoading">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin">
+                <line x1="12" y1="2" x2="12" y2="6"></line>
+                <line x1="12" y1="18" x2="12" y2="22"></line>
+                <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                <line x1="2" y1="12" x2="6" y2="12"></line>
+                <line x1="18" y1="12" x2="22" y2="12"></line>
+                <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+                <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+              </svg>
+              Signing in...
+            </span>
+          </button>
+        </form>
+  
+        <!-- Google login -->
+        <div class="google-login">
+          <button class="google-btn" (click)="loginWithGoogle()" [disabled]="isLoading">
+            <img src="../../assets/images/google.png" alt="Google">
+            Sign in with Google
+          </button>
+        </div>
+  
+        <!-- Sign up link -->
+        <div class="signup-link">
+          <span>Don't have an account?</span>
+          <a [routerLink]="['/sign-up']" *ngIf="!isLoading">Sign up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+   <style>
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .login-btn:disabled,
+    .google-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .form-control:disabled {
+      background-color: #f5f5f5;
+      opacity: 0.6;
+    }
+  </style>

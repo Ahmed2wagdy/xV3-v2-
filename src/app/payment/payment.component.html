@@ -1,0 +1,71 @@
+<div class="payment-container" *ngIf="showPayment">
+  <!-- Payment Header -->
+  <div class="payment-header">
+    <h4>Complete Your Payment</h4>
+    <p class="text-muted">Secure payment powered by Stripe</p>
+  </div>
+
+  <!-- Payment Amount -->
+  <div class="payment-amount">
+    <div class="amount-card">
+      <span class="amount-label">Property Listing Fee:</span>
+      <span class="amount-value">${{ paymentAmount }}</span>
+    </div>
+  </div>
+
+  <!-- Stripe Card Element -->
+  <div class="card-section">
+    <label for="card-element-stripe">Credit or Debit Card</label>
+    <div id="card-element" class="stripe-card" role="textbox" aria-label="Credit or debit card input">
+      <!-- Stripe Elements سيضع الكارت هنا -->
+    </div>
+    
+    <!-- Retry button if card element not ready -->
+    <div *ngIf="!isCardElementReady && !isProcessing" class="text-center mt-2">
+      <button class="btn btn-sm btn-outline-primary" (click)="retryInitialization()">
+        <i class="bi bi-arrow-clockwise"></i> Retry Card Setup
+      </button>
+      <small class="text-muted d-block mt-1">Click if the card input doesn't appear</small>
+    </div>
+    
+    <div id="card-errors" class="error-message" role="alert" aria-live="polite"></div>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="payment-actions">
+    <button 
+      class="btn btn-secondary" 
+      (click)="cancelPayment()"
+      [disabled]="isProcessing">
+      Cancel
+    </button>
+    
+    <button 
+      class="btn btn-primary payment-btn"
+      (click)="handlePayment()"
+      [disabled]="isProcessing || !isCardElementReady">
+      <span *ngIf="!isProcessing">
+        <i class="bi bi-lock"></i>
+        Pay ${{ paymentAmount }}
+      </span>
+      <span *ngIf="isProcessing">
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Processing...
+      </span>
+    </button>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="!isCardElementReady && !isProcessing" class="text-center mt-2">
+    <div class="spinner-border spinner-border-sm text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <small class="text-muted d-block">Loading payment system...</small>
+  </div>
+
+  <!-- Security Notice -->
+  <div class="security-notice">
+    <i class="bi bi-shield-check text-success"></i>
+    <span>Your payment information is encrypted and secure</span>
+  </div>
+</div>
