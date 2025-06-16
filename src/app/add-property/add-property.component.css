@@ -1,226 +1,473 @@
-  
 .payment-notice {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 0;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.payment-info-card {
+  padding: 20px;
+  background: white;
+  border: 2px solid #08227B;
+  border-radius: 8px;
+  position: relative;
+}
+
+.payment-info-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  background: linear-gradient(45deg, #08227B, #061a5f);
+  border-radius: 8px;
+  z-index: -1;
+}
+
+.payment-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #08227B, #061a5f);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.payment-icon i {
+  font-size: 24px;
+  color: white;
+}
+
+.payment-content h5 {
+  color: #08227B;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.payment-content p {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block !important;
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+}
+
+.image-preview-card {
+  position: relative;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.image-preview-card:hover {
+  border-color: #08227B;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(8, 34, 123, 0.2);
+}
+
+.image-preview-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-preview-card:hover .remove-btn {
+  opacity: 1;
+}
+
+.form-section {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  color: #08227B;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f8f9fa;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 25px;
+  background: linear-gradient(135deg, #08227B, #061a5f);
+  border-radius: 2px;
+}
+
+.amenities-group {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.amenities-subtitle {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.form-check-input:checked {
+  background-color: #08227B;
+  border-color: #08227B;
+}
+
+.form-check-input:focus {
+  border-color: #08227B;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(8, 34, 123, 0.25);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #08227B, #061a5f);
+  border: none;
+  font-weight: 600;
+  padding: 12px 30px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #061a5f, #08227B);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(8, 34, 123, 0.3);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  border: none;
+  font-weight: 600;
+  padding: 12px 30px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+/* ✅ أنماط جديدة للحقول المضافة */
+
+/* Location URL Input with Auto Generate Button */
+.location-url-wrapper {
+  position: relative;
+}
+
+.btn-outline-primary {
+  color: #08227B;
+  border-color: #08227B;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: #08227B;
+  border-color: #08227B;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(8, 34, 123, 0.2);
+}
+
+.btn-outline-primary:focus {
+  box-shadow: 0 0 0 0.25rem rgba(8, 34, 123, 0.25);
+}
+
+/* Auto Generate Button Styling */
+.btn-sm {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+
+/* Form Text Styling */
+.form-text {
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.form-text .text-muted {
+  color: #6c757d !important;
+}
+
+.form-text i {
+  margin-right: 0.25rem;
+}
+
+/* Enhanced Form Control Styling */
+.form-control:focus {
+  border-color: #08227B;
+  box-shadow: 0 0 0 0.25rem rgba(8, 34, 123, 0.25);
+}
+
+.form-select:focus {
+  border-color: #08227B;
+  box-shadow: 0 0 0 0.25rem rgba(8, 34, 123, 0.25);
+}
+
+/* Invalid Input Styling */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+.form-select.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+/* Page Title Styling */
+.page-title {
+  color: #08227B;
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+/* Loading States */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+  border-width: 0.25em;
+}
+
+/* Alert Styling */
+.alert-success {
+  background-color: #d1edff;
+  border-color: #08227B;
+  color: #08227B;
+}
+
+.alert-success .bi {
+  color: #08227B;
+}
+
+/* Enhanced Button Styling */
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
+  border-radius: 0.5rem;
+}
+
+/* Location Section Specific Styling */
+.location-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Auto Generate Button Icon */
+.bi-geo-alt {
+  font-size: 1rem;
+  margin-right: 0.25rem;
+}
+
+/* Listing Type Dropdown */
+.listing-type-wrapper {
+  position: relative;
+}
+
+/* Enhanced Tooltips */
+[title] {
+  cursor: help;
+}
+
+/* Success/Error States for URL field */
+.url-valid {
+  border-left: 4px solid #28a745;
+  padding-left: 12px;
+}
+
+.url-invalid {
+  border-left: 4px solid #dc3545;
+  padding-left: 12px;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border-radius: 8px;
+}
+
+/* Form Validation Enhancement */
+.was-validated .form-control:valid {
+  border-color: #28a745;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.94-.94 2.94 2.94L6.5 8.5z'/%3e%3c/svg%3e");
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-section {
+    padding: 20px;
+    margin-bottom: 20px;
   }
 
   .payment-info-card {
-    padding: 20px;
-    background: white;
-    border: 2px solid #08227B;
-    border-radius: 8px;
-    position: relative;
-  }
-
-  .payment-info-card::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    background: linear-gradient(45deg, #08227B, #061a5f);
-    border-radius: 8px;
-    z-index: -1;
+    padding: 15px;
   }
 
   .payment-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #08227B, #061a5f);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 20px;
-    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
   }
 
   .payment-icon i {
-    font-size: 24px;
-    color: white;
-  }
-
-  .payment-content h5 {
-    color: #08227B;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-
-  .payment-content p {
-    color: #333;
-    margin-bottom: 5px;
-  }
-
-  .modal {
-    background: rgba(0, 0, 0, 0.5);
-  }
-
-  .modal.show {
-    display: block !important;
-  }
-
-  .modal-backdrop {
-    background: rgba(0, 0, 0, 0.5);
-  }
-
-  .modal-backdrop.show {
-    opacity: 1;
-  }
-
-  .image-preview-card {
-    position: relative;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .image-preview-card:hover {
-    border-color: #08227B;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(8, 34, 123, 0.2);
-  }
-
-  .image-preview-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-  }
-
-  .remove-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .image-preview-card:hover .remove-btn {
-    opacity: 1;
-  }
-
-  .form-section {
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
-    padding: 25px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  }
-
-  .section-title {
-    color: #08227B;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #f8f9fa;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-title::before {
-    content: '';
-    width: 4px;
-    height: 25px;
-    background: linear-gradient(135deg, #08227B, #061a5f);
-    border-radius: 2px;
+    font-size: 20px;
   }
 
   .amenities-group {
-    margin-bottom: 25px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+    padding: 15px;
   }
 
-  .amenities-subtitle {
-    color: #495057;
-    font-weight: 600;
+  .modal-dialog {
+    margin: 10px;
+  }
+
+  .image-preview-card img {
+    height: 120px;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Mobile-friendly Auto Generate Button */
+  .btn-sm {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .form-text {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .payment-info-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .payment-icon {
+    margin-right: 0;
     margin-bottom: 15px;
-    font-size: 16px;
+    align-self: center;
   }
 
-  .form-check-input:checked {
-    background-color: #08227B;
-    border-color: #08227B;
+  .btn-outline-primary {
+    width: 100%;
+    margin-top: 10px;
+    margin-left: 0 !important;
   }
 
-  .form-check-input:focus {
-    border-color: #08227B;
-    outline: 0;
-    box-shadow: 0 0 0 0.25rem rgba(8, 34, 123, 0.25);
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 15px;
   }
 
-  .btn-primary {
-    background: linear-gradient(135deg, #08227B, #061a5f);
-    border: none;
-    font-weight: 600;
-    padding: 12px 30px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+  .section-title {
+    font-size: 1.25rem;
   }
+}
 
-  .btn-primary:hover {
-    background: linear-gradient(135deg, #061a5f, #08227B);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(8, 34, 123, 0.3);
-  }
+/* Animation for Auto Generate Button */
+@keyframes generate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
 
-  .btn-secondary {
-    background: #6c757d;
-    border: none;
-    font-weight: 600;
-    padding: 12px 30px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-  }
+.btn-outline-primary:active {
+  animation: generate 0.2s ease-in-out;
+}
 
-  .btn-secondary:hover {
-    background: #5a6268;
-    transform: translateY(-1px);
-  }
+/* Custom styling for URL input when auto-generated */
+.auto-generated-url {
+  background-color: #e8f5e8;
+  border-color: #28a745;
+  transition: background-color 0.3s ease;
+}
 
-  @media (max-width: 768px) {
-    .form-section {
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .payment-info-card {
-      padding: 15px;
-    }
-
-    .payment-icon {
-      width: 50px;
-      height: 50px;
-      margin-right: 15px;
-    }
-
-    .payment-icon i {
-      font-size: 20px;
-    }
-
-    .amenities-group {
-      padding: 15px;
-    }
-
-    .modal-dialog {
-      margin: 10px;
-    }
-
-    .image-preview-card img {
-      height: 120px;
-    }
-  }
+.auto-generated-url:focus {
+  background-color: white;
+}

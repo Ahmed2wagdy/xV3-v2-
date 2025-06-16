@@ -1,0 +1,46 @@
+#propertyCarousel {
+  max-height: 500px;
+  overflow: hidden;
+}
+
+#propertyCarousel img {
+  object-fit: cover;
+  height: 500px;
+  width: 100%;
+}
+/* Reviews Section Modern Styles */
+.star-label {
+  cursor: pointer;
+  color: #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.star-input input[type="radio"]:checked ~ .star-label,
+.star-input .star-label:hover,
+.star-input .star-label:hover ~ .star-label {
+  color: #ffc107;
+}
+
+.star-input input[type="radio"]:checked + .star-label {
+  color: #ffc107;
+}
+
+.review-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08) !important;
+  border-color: #dee2e6;
+}
+
+.avatar {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.add-review-card {
+  border-left: 4px solid #4361ee;
+}

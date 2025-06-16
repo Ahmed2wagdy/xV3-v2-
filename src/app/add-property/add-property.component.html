@@ -34,7 +34,7 @@
           <h3 class="section-title">Basic Information</h3>
           
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
               <div class="mb-3">
                 <label for="title" class="form-label">Property Title *</label>
                 <input 
@@ -52,7 +52,7 @@
               </div>
             </div>
             
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="mb-3">
                 <label for="price" class="form-label">Price (EGP) *</label>
                 <input 
@@ -66,6 +66,24 @@
                 <div *ngIf="submitted && f['price'].errors" class="invalid-feedback">
                   <div *ngIf="f['price'].errors['required']">Price is required</div>
                   <div *ngIf="f['price'].errors['min']">Price must be greater than 0</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="mb-3">
+                <label for="listingType" class="form-label">Listing Type *</label>
+                <select 
+                  id="listingType"
+                  formControlName="listingType" 
+                  class="form-select"
+                  [class.is-invalid]="submitted && f['listingType'].errors"
+                >
+                  <option value="">Select listing type</option>
+                  <option *ngFor="let type of listingTypes" [value]="type">{{ type }}</option>
+                </select>
+                <div *ngIf="submitted && f['listingType'].errors" class="invalid-feedback">
+                  Listing type is required
                 </div>
               </div>
             </div>
@@ -184,6 +202,7 @@
                   formControlName="governate" 
                   class="form-select"
                   [class.is-invalid]="submitted && f['governate'].errors"
+                  (change)="generateLocationUrl()"
                 >
                   <option value="">Select governorate</option>
                   <option *ngFor="let gov of governorates" [value]="gov">{{ gov }}</option>
@@ -202,6 +221,7 @@
                   formControlName="city" 
                   class="form-select"
                   [class.is-invalid]="submitted && f['city'].errors"
+                  (change)="generateLocationUrl()"
                 >
                   <option value="">Select city</option>
                   <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
@@ -222,9 +242,47 @@
                   class="form-control"
                   [class.is-invalid]="submitted && f['street'].errors"
                   placeholder="e.g., 123 Tahrir Street"
+                  (blur)="generateLocationUrl()"
                 >
                 <div *ngIf="submitted && f['street'].errors" class="invalid-feedback">
                   Street address is required
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location URL Field -->
+          <div class="row">
+            <div class="col-12">
+              <div class="mb-3">
+                <label for="locationUrl" class="form-label">
+                  Location URL (Google Maps) *
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-primary ms-2"
+                    (click)="generateLocationUrl()"
+                    title="Auto-generate Google Maps URL"
+                  >
+                    <i class="bi bi-geo-alt"></i> Auto Generate
+                  </button>
+                </label>
+                <input 
+                  type="url" 
+                  id="locationUrl"
+                  formControlName="locationUrl" 
+                  class="form-control"
+                  [class.is-invalid]="submitted && f['locationUrl'].errors"
+                  placeholder="https://maps.google.com/..."
+                >
+                <div *ngIf="submitted && f['locationUrl'].errors" class="invalid-feedback">
+                  <div *ngIf="f['locationUrl'].errors['required']">Location URL is required</div>
+                  <div *ngIf="f['locationUrl'].errors['pattern']">Please enter a valid URL (must start with http:// or https://)</div>
+                </div>
+                <div class="form-text">
+                  <small class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    You can paste a Google Maps link or click "Auto Generate" to create one automatically from your address.
+                  </small>
                 </div>
               </div>
             </div>
@@ -400,4 +458,3 @@
      [style.display]="showPaymentModal ? 'block' : 'none'"
      (click)="onPaymentCancel()">
 </div>
-

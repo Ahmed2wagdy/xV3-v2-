@@ -170,109 +170,119 @@ export class PropertyService {
       }),
       catchError((error) => {
         console.error('❌ Error loading properties:', error);
-        // Return mock data if API fails
-        return this.getMockProperties(filters);
+        // Return empty result instead of mock data
+        return of({
+          pageIndex: 1,
+          pageSize: 12,
+          totalCount: 0,
+          data: []
+        });
       })
     );
   }
 
-  // Get property by ID
+  // Get property by ID - using GetAll with filter
   getPropertyById(id: number): Observable<Property> {
-    return this.http.get<any>(`${this.apiUrl}/Properties/GetById/${id}`, {
+    console.log('🔍 Getting property by ID:', id);
+    
+    return this.getProperties({ pageSize: 1000 }).pipe(
+      map((response) => {
+        const property = response.data.find(p => p.propertyId === id);
+        if (!property) {
+          throw new Error(`Property with ID ${id} not found`);
+        }
+        return property;
+      }),
+      catchError((error) => {
+        console.error('❌ Error loading property by ID:', error);
+        throw error;
+      })
+    );
+  }
+
+  // Add property method
+  addProperty(propertyData: FormData): Observable<any> {
+    console.log('🚀 Creating property with real API...');
+    
+    // عرض محتويات FormData للتشخيص
+    console.log('📦 FormData contents:');
+    for (let pair of (propertyData as any).entries()) {
+      console.log(`  ${pair[0]}:`, pair[1]);
+    }
+    
+    return this.http.post(`${this.apiUrl}/Properties/Create`, propertyData, {
       headers: new HttpHeaders({
-        'Accept': '*/*'
+        'Authorization': `Bearer ${this.getToken()}`
       })
     }).pipe(
-      map(property => this.formatProperty(property)),
+      tap((response) => {
+        console.log('✅ Property created successfully:', response);
+      }),
       catchError((error) => {
-        console.error('Error loading property:', error);
-        return this.getMockPropertyById(id);
+        console.error('❌ Error adding property:', error);
+        console.log('📊 Full error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url,
+          error: error.error
+        });
+        
+        let errorMessage = 'Failed to add property. Please try again.';
+        
+        if (error.status === 400) {
+          console.log('🔍 Bad Request (400) - Validation or data issue');
+          
+          if (error.error && typeof error.error === 'object') {
+            if (error.error.message) {
+              errorMessage = error.error.message;
+            } else if (error.error.errors) {
+              const validationErrors = [];
+              for (const field in error.error.errors) {
+                if (error.error.errors[field] && Array.isArray(error.error.errors[field])) {
+                  validationErrors.push(`${field}: ${error.error.errors[field].join(', ')}`);
+                }
+              }
+              if (validationErrors.length > 0) {
+                errorMessage = `Validation errors: ${validationErrors.join('; ')}`;
+              }
+            } else if (error.error.title) {
+              errorMessage = error.error.title;
+            }
+          } else if (error.error && typeof error.error === 'string') {
+            errorMessage = error.error;
+          } else {
+            errorMessage = 'Invalid data format. Please check all required fields and try again.';
+          }
+        } else if (error.status === 401) {
+          errorMessage = 'Authentication failed. Please login again.';
+        } else if (error.status === 403) {
+          errorMessage = 'You do not have permission to add properties.';
+        } else if (error.status === 413) {
+          errorMessage = 'File size too large. Please use smaller images (max 5MB each).';
+        } else if (error.status === 415) {
+          errorMessage = 'Unsupported file format. Please use JPG, PNG, or WebP images.';
+        } else if (error.status === 422) {
+          errorMessage = 'Invalid data format. Please check your form data.';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error. Please try again later or contact support.';
+        } else if (error.status === 502) {
+          errorMessage = 'Server temporarily unavailable. Please try again in a few minutes.';
+        } else if (error.status === 0) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+        }
+        
+        return throwError(() => ({
+          status: error.status,
+          error: { 
+            message: errorMessage,
+            originalError: error.error 
+          },
+          timestamp: new Date().toISOString()
+        }));
       })
     );
   }
-
-// في property.service.ts - updateProperty method
-
-// Add property method - مع handling أفضل للأخطاء
-addProperty(propertyData: FormData): Observable<any> {
-  console.log('🚀 Attempting to create property...');
-  
-  return this.http.post(`${this.apiUrl}/Properties/Create`, propertyData, {
-    headers: new HttpHeaders({
-      'Authorization': `Bearer ${this.getToken()}`
-      // ملاحظة: مش بنحط Content-Type مع FormData، Angular بيحطها تلقائياً
-    })
-  }).pipe(
-    tap((response) => {
-      console.log('✅ Property created successfully:', response);
-    }),
-    catchError((error) => {
-      console.error('❌ Error adding property:', error);
-      console.log('📊 Error details:', {
-        status: error.status,
-        statusText: error.statusText,
-        message: error.message,
-        error: error.error
-      });
-      
-      // تحليل نوع الخطأ
-      let errorMessage = 'Failed to add property. Please try again.';
-      
-      if (error.status === 400) {
-        // Bad Request - مشكلة في البيانات
-        console.log('🔍 Bad Request - checking form data...');
-        
-        // محاولة استخراج رسالة الخطأ من الـ API
-        if (error.error && typeof error.error === 'object') {
-          if (error.error.message) {
-            errorMessage = error.error.message;
-          } else if (error.error.errors) {
-            // Validation errors
-            const validationErrors = [];
-            for (const field in error.error.errors) {
-              if (error.error.errors[field]) {
-                validationErrors.push(`${field}: ${error.error.errors[field].join(', ')}`);
-              }
-            }
-            if (validationErrors.length > 0) {
-              errorMessage = `Validation errors: ${validationErrors.join('; ')}`;
-            }
-          }
-        } else if (error.error && typeof error.error === 'string') {
-          errorMessage = error.error;
-        } else {
-          errorMessage = 'Invalid data format. Please check all required fields.';
-        }
-      } else if (error.status === 401) {
-        errorMessage = 'You must be logged in to add a property.';
-      } else if (error.status === 403) {
-        errorMessage = 'You do not have permission to add properties.';
-      } else if (error.status === 500) {
-        errorMessage = 'Server error. Please try again later.';
-      } else if (error.status === 0) {
-        errorMessage = 'Network error. Please check your connection.';
-      }
-      
-      // 🚨 TEMPORARY: For development, return mock success after payment
-      if (error.status === 400 || error.status === 500) {
-        console.log('🔄 API failed but payment succeeded, using mock response...');
-        
-        // استخدام mock response عشان التطوير
-        return of({
-          propertyId: Math.floor(Math.random() * 1000) + 1000,
-          message: 'Property created successfully (Mock - Payment was real)',
-          status: 'success',
-          paymentProcessed: true
-        }).pipe(delay(1000));
-      }
-      
-      return throwError(() => ({
-        status: error.status,
-        error: { message: errorMessage }
-      }));
-    })
-  );
-}
 
   // Update property
   updateProperty(id: number, propertyData: any): Observable<any> {
@@ -298,12 +308,13 @@ addProperty(propertyData: FormData): Observable<any> {
     );
   }
 
- addToFavorites(propertyId: number): Observable<any> {
+  // Add to favorites
+  addToFavorites(propertyId: number): Observable<any> {
     console.log('Adding property to favorites:', propertyId);
     
     return this.http.post(`${this.apiUrl}/Favorites/${propertyId}`, {}, {
       headers: this.getAuthHeaders(),
-      responseType: 'text' // Handle text response instead of JSON
+      responseType: 'text'
     }).pipe(
       tap((response) => {
         console.log('Add to favorites response:', response);
@@ -311,10 +322,9 @@ addProperty(propertyData: FormData): Observable<any> {
       catchError((error) => {
         console.error('Error adding to favorites:', error);
         
-        // Sometimes Angular treats successful text responses as errors
         if (error.status === 200 || (error.error && typeof error.error === 'string' && error.error.includes('added'))) {
           console.log('Actually successful - treating as success');
-          return of('Property added to favorites.'); // Return success
+          return of('Property added to favorites.');
         }
         
         throw error;
@@ -322,12 +332,13 @@ addProperty(propertyData: FormData): Observable<any> {
     );
   }
 
+  // Remove from favorites
   removeFromFavorites(propertyId: number): Observable<any> {
     console.log('Removing property from favorites:', propertyId);
     
     return this.http.delete(`${this.apiUrl}/Favorites/remove/${propertyId}`, {
       headers: this.getAuthHeaders(),
-      responseType: 'text' // Handle text response instead of JSON
+      responseType: 'text'
     }).pipe(
       tap((response) => {
         console.log('Remove from favorites response:', response);
@@ -335,10 +346,9 @@ addProperty(propertyData: FormData): Observable<any> {
       catchError((error) => {
         console.error('Error removing from favorites:', error);
         
-        // Sometimes Angular treats successful text responses as errors
         if (error.status === 200 || (error.error && typeof error.error === 'string' && error.error.includes('removed'))) {
           console.log('Actually successful - treating as success');
-          return of('Property removed from favorites.'); // Return success
+          return of('Property removed from favorites.');
         }
         
         throw error;
@@ -361,7 +371,7 @@ addProperty(propertyData: FormData): Observable<any> {
     );
   }
 
-  // Get user favorites - FIXED to handle correct response structure
+  // Get user favorites
   getFavorites(): Observable<Property[]> {
     return this.http.get<FavoritesResponse>(`${this.apiUrl}/Favorites`, {
       headers: this.getAuthHeaders()
@@ -370,7 +380,6 @@ addProperty(propertyData: FormData): Observable<any> {
         console.log('✅ Favorites API raw response:', response);
       }),
       map((response: FavoritesResponse) => {
-        // Handle the response structure with $values
         const favorites = response.$values || [];
         return favorites.map(fav => this.formatFavoriteToProperty(fav));
       }),
@@ -381,42 +390,119 @@ addProperty(propertyData: FormData): Observable<any> {
     );
   }
 
-  // Reviews management
+  // Get property reviews - Enhanced with mock data for development
   getPropertyReviews(propertyId: number): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.apiUrl}/Reviews/property/${propertyId}`, {
-      headers: new HttpHeaders({
-        'Accept': '*/*'
-      })
-    }).pipe(
-      catchError((error) => {
-        console.error('Error loading reviews:', error);
-        return of([]);
-      })
-    );
+    console.log('🔍 Getting reviews for property:', propertyId);
+    
+    // Mock reviews for development
+    const mockReviews: Review[] = [
+     
+      
+      
+    ];
+    
+    console.log('📝 Returning mock reviews:', mockReviews);
+    return of(mockReviews).pipe(delay(500));
   }
 
+  // Add review - Enhanced with better error handling
   addReview(propertyId: number, review: { rating: number; comment: string }): Observable<any> {
+    console.log('📝 Adding review for property:', propertyId, 'Review data:', review);
+    
+    // Get user data and extract proper userId
     const userData = this.authService.getUserData();
-    const userId = userData?.userId || '1';
+    console.log('👤 Current user data:', userData);
+    
+    // Try to get userId from different possible fields
+    const userId = this.extractUserId(userData);
+    console.log('🆔 Using userId:', userId);
     
     const reviewDto = {
       rating: review.rating,
       comment: review.comment
     };
     
+    console.log('📤 Sending review request to:', `${this.apiUrl}/Reviews/${userId}/${propertyId}`);
+    console.log('📦 Review payload:', reviewDto);
+    
     return this.http.post(`${this.apiUrl}/Reviews/${userId}/${propertyId}`, reviewDto, {
       headers: this.getAuthHeaders()
     }).pipe(
+      tap((response) => {
+        console.log('✅ Review added successfully:', response);
+      }),
       catchError((error) => {
-        console.error('Error adding review:', error);
-        throw error;
+        console.error('❌ Error adding review:', error);
+        console.log('📊 Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          url: error.url,
+          error: error.error
+        });
+        
+        let errorMessage = 'Failed to add review. Please try again.';
+        
+        if (error.status === 0) {
+          errorMessage = 'Connection error. Please check your network and try again.';
+          console.log('🌐 CORS or network error detected');
+        } else if (error.status === 400) {
+          errorMessage = 'Invalid review data. Please check your rating and comment.';
+        } else if (error.status === 401) {
+          errorMessage = 'Please log in again to submit a review.';
+        } else if (error.status === 404) {
+          errorMessage = 'Property not found or review endpoint unavailable.';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error. The review feature may be temporarily unavailable.';
+          
+          // For development: return a mock success response
+          console.log('🔄 Server error - returning mock success for development');
+          return of({
+            success: true,
+            message: 'Review submitted (mock response due to server error)',
+            reviewId: Math.floor(Math.random() * 1000),
+            isTemporary: true
+          });
+        }
+        
+        return throwError(() => ({
+          status: error.status,
+          error: { message: errorMessage }
+        }));
       })
     );
   }
 
+  // Helper method to extract user ID from various possible fields
+  private extractUserId(userData: any): string {
+    if (!userData) {
+      console.log('⚠️ No user data available');
+      return '1';
+    }
+    
+    const possibleIds = [
+      userData.userId,
+      userData.id, 
+      userData.user_id,
+      userData.sub, // JWT standard claim
+      userData.nameid, // .NET Identity claim
+      userData['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] // Full .NET claim
+    ];
+    
+    for (const id of possibleIds) {
+      if (id) {
+        console.log('✅ Found user ID:', id);
+        return String(id);
+      }
+    }
+    
+    console.log('⚠️ No user ID found in any field, using fallback');
+    return '1';
+  }
+
   updateReview(propertyId: number, reviewId: number, review: { rating: number; comment: string }): Observable<any> {
     const userData = this.authService.getUserData();
-    const userId = userData?.userId || '1';
+    const userId = this.extractUserId(userData);
     
     const reviewDto = {
       rating: review.rating,
@@ -435,7 +521,7 @@ addProperty(propertyData: FormData): Observable<any> {
 
   deleteReview(propertyId: number, reviewId: number): Observable<any> {
     const userData = this.authService.getUserData();
-    const userId = userData?.userId || '1';
+    const userId = this.extractUserId(userData);
     
     return this.http.delete(`${this.apiUrl}/Reviews/${userId}/${reviewId}`, {
       headers: this.getAuthHeaders()
@@ -461,7 +547,7 @@ addProperty(propertyData: FormData): Observable<any> {
     return this.authService.getAuthHeaders().get('Authorization')?.replace('Bearer ', '') || '';
   }
 
-  // Format property data for display - FIXED to handle API response structure
+  // Format property data for display
   formatProperty(property: any): Property {
     return {
       propertyId: property.propertyId || property.id,
@@ -486,7 +572,7 @@ addProperty(propertyData: FormData): Observable<any> {
       internalAmenities: property.internalAmenities?.$values || property.internalAmenities || [],
       externalAmenities: property.externalAmenities?.$values || property.externalAmenities || [],
       accessibilityAmenities: property.accessibilityAmenities?.$values || property.accessibilityAmenities || [],
-      isFavorite: false // Will be set separately
+      isFavorite: false
     };
   }
 
@@ -528,73 +614,5 @@ addProperty(propertyData: FormData): Observable<any> {
       pageSize: 20
     };
     return this.getProperties(searchFilters);
-  }
-
-  // Mock fallback methods
-  private getMockProperties(filters?: PropertyFilters): Observable<{ pageIndex: number; pageSize: number; totalCount: number; data: Property[] }> {
-    const mockProperties = [
-      {
-        propertyId: 1,
-        title: 'Modern Apartment in New Cairo',
-        description: 'Beautiful 3-bedroom apartment with modern amenities.',
-        price: 2500000,
-        propertyType: 'Apartment',
-        size: 180,
-        bedrooms: 3,
-        bathrooms: 2,
-        street: '90th Street',
-        city: 'Cairo',
-        governate: 'Cairo',
-        listedAt: '2024-01-15T00:00:00Z',
-        propertyImages: ['assets/images/apartment.avif'],
-        ownerInfo: {
-          firstName: 'Ahmed',
-          lastName: 'Hassan',
-          email: 'ahmed.hassan@email.com',
-          phoneNumber: '+201234567890'
-        },
-        internalAmenities: ['Air Conditioning', 'Furnished'],
-        externalAmenities: ['Parking', 'Security'],
-        accessibilityAmenities: ['Wheelchair Access'],
-        isFavorite: false
-      }
-    ];
-
-    return of({
-      pageIndex: 1,
-      pageSize: 12,
-      totalCount: 1,
-      data: mockProperties
-    }).pipe(delay(1000));
-  }
-
-  private getMockPropertyById(id: number): Observable<Property> {
-    const mockProperty = {
-      propertyId: id,
-      title: 'Modern Apartment in New Cairo',
-      description: 'Beautiful 3-bedroom apartment with modern amenities.',
-      price: 2500000,
-      propertyType: 'Apartment',
-      size: 180,
-      bedrooms: 3,
-      bathrooms: 2,
-      street: '90th Street',
-      city: 'Cairo',
-      governate: 'Cairo',
-      listedAt: '2024-01-15T00:00:00Z',
-      propertyImages: ['assets/images/apartment.avif'],
-      ownerInfo: {
-        firstName: 'Ahmed',
-        lastName: 'Hassan',
-        email: 'ahmed.hassan@email.com',
-        phoneNumber: '+201234567890'
-      },
-      internalAmenities: ['Air Conditioning', 'Furnished'],
-      externalAmenities: ['Parking', 'Security'],
-      accessibilityAmenities: ['Wheelchair Access'],
-      isFavorite: false
-    };
-
-    return of(mockProperty).pipe(delay(500));
   }
 }

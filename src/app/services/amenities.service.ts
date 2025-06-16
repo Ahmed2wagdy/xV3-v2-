@@ -203,13 +203,5 @@ export class AmenitiesService {
     return displayNames[type];
   }
 
-  // Get amenity type display name in Arabic
-  getAmenityTypeDisplayNameArabic(type: AmenityType): string {
-    const displayNames = {
-      'internal': 'المرافق الداخلية',
-      'external': 'المرافق الخارجية',
-      'accessibility': 'مميزات الوصول'
-    };
-    return displayNames[type];
-  }
+ 
 }

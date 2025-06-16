@@ -15,7 +15,7 @@ declare var Stripe: any;
 })
 export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() showPayment = false;
-  @Input() paymentAmount = 50;
+  @Input() paymentAmount = 1; // $1 للاختبار (أو 50 للإنتاج)
   @Output() paymentSuccess = new EventEmitter<any>();
   @Output() paymentCancel = new EventEmitter<void>();
 
@@ -37,21 +37,21 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
   constructor(private paymentService: PaymentService) {}
 
   ngOnInit() {
-    console.log('🚀 PaymentComponent initialized');
+    console.log('🚀 PaymentComponent initialized with amount:', this.paymentAmount);
     this.loadStripe();
   }
 
   ngAfterViewInit() {
-    // مش نعمل initialize هنا، هنعمله لما الـ modal يفتح
+    // سنقوم بالتهيئة عند فتح الـ modal
   }
 
   ngOnChanges(changes: any) {
-    // لما showPayment يتغير لـ true، نعمل initialize
+    // عند فتح نافذة الدفع، نقوم بتهيئة Stripe
     if (changes.showPayment && changes.showPayment.currentValue === true) {
       console.log('🔥 Payment modal opened, initializing Stripe...');
       setTimeout(() => {
         this.initializeStripeElements();
-      }, 300); // انتظار للـ modal يظهر كامل
+      }, 300);
     }
   }
 
@@ -80,9 +80,11 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
       const script = document.createElement('script');
       script.src = 'https://js.stripe.com/v3/';
       script.onload = () => {
-        console.log('✅ Stripe script loaded from external');
+        console.log('✅ Stripe script loaded successfully');
         this.stripeLoaded = true;
-        this.initializeStripeElements();
+        if (this.showPayment) {
+          this.initializeStripeElements();
+        }
       };
       script.onerror = () => {
         console.error('❌ Failed to load Stripe script');
@@ -92,8 +94,9 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
     } else {
       console.log('✅ Stripe already available');
       this.stripeLoaded = true;
-      // أجل التهيئة شوية عشان الـ DOM يخلص
-      setTimeout(() => this.initializeStripeElements(), 100);
+      if (this.showPayment) {
+        setTimeout(() => this.initializeStripeElements(), 100);
+      }
     }
   }
 
@@ -102,7 +105,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
     
     console.log(`🔄 Initializing Stripe Elements (Attempt ${this.initializationAttempts})...`);
     
-    // تحقق من الشروط
+    // فحص الشروط المطلوبة
     if (!this.showPayment) {
       console.log('⏭️ Payment modal not shown, skipping initialization');
       return;
@@ -121,7 +124,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
       return;
     }
 
-    // تحقق من وجود الـ container
+    // فحص وجود الـ container
     const cardElementContainer = document.getElementById('card-element');
     if (!cardElementContainer) {
       console.log('⏭️ Card element container not found, will retry...');
@@ -132,22 +135,22 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
     }
 
     try {
-      // Initialize Stripe
+      // تهيئة Stripe
       if (!this.stripe) {
         this.stripe = Stripe(this.stripePublishableKey);
         console.log('✅ Stripe instance created');
       }
       
-      // Create Elements instance
+      // إنشاء Elements instance
       if (!this.elements) {
         this.elements = this.stripe.elements();
         console.log('✅ Elements instance created');
       }
       
-      // Destroy existing card element if any
+      // حذف أي card element موجود
       this.destroyCardElement();
       
-      // Create new card element
+      // إنشاء card element جديد
       this.cardElement = this.elements.create('card', {
         style: {
           base: {
@@ -168,13 +171,13 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
             iconColor: '#28a745'
           }
         },
-        hidePostalCode: true, // إخفاء ZIP code
-        disableLink: true // إخفاء Save with Link
+        hidePostalCode: true,
+        disableLink: true
       });
       
       console.log('✅ Card element created');
       
-      // Add event listeners
+      // إضافة event listeners
       this.cardElement.on('ready', () => {
         console.log('✅ Card element is ready and interactive');
         this.isCardElementReady = true;
@@ -186,7 +189,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
         if (displayError) {
           if (event.error) {
             displayError.textContent = event.error.message;
-            console.log('❌ Card error:', event.error.message);
+            console.log('❌ Card validation error:', event.error.message);
           } else {
             displayError.textContent = '';
           }
@@ -201,7 +204,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
         console.log('👆 Card element blurred');
       });
       
-      // Mount the card element
+      // ربط card element بالـ DOM
       console.log('📌 Mounting card element...');
       this.cardElement.mount('#card-element');
       console.log('✅ Card element mounted successfully');
@@ -222,7 +225,6 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
       
       if (!this.cardElement) {
         this.showError('Payment system not ready. Please wait a moment and try again.');
-        // محاولة إعادة التهيئة
         this.initializeStripeElements();
       }
       return;
@@ -234,11 +236,15 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
     try {
       console.log('🔄 Creating payment intent for $', this.paymentAmount);
       
-      // 1. Create payment intent from backend
-      const paymentIntentResponse = await this.paymentService.createPaymentIntent({
-        currency: 'usd',
-        amount: this.paymentAmount * 100 // Convert to cents
-      }).toPromise();
+      // 1. إنشاء Payment Intent من البكاند (بدون paymentIntentId لتجنب Error 400)
+      const paymentRequest = {
+        currency: 'USD',
+        amount: this.paymentAmount * 100 // تحويل إلى cents
+      };
+
+      console.log('📤 Sending payment request:', paymentRequest);
+
+      const paymentIntentResponse = await this.paymentService.createPaymentIntent(paymentRequest).toPromise();
 
       console.log('✅ Payment intent response:', paymentIntentResponse);
 
@@ -248,7 +254,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
 
       console.log('🔄 Confirming payment with Stripe...');
 
-      // 2. Confirm payment with Stripe
+      // 2. تأكيد الدفع مع Stripe
       const { error, paymentIntent } = await this.stripe.confirmCardPayment(
         paymentIntentResponse.clientSecret,
         {
@@ -263,7 +269,21 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
 
       if (error) {
         console.error('❌ Payment confirmation error:', error);
-        this.showError(error.message || 'Payment failed. Please try again.');
+        
+        // معالجة أخطاء Stripe المختلفة
+        let userMessage = error.message || 'Payment failed. Please try again.';
+        
+        if (error.code === 'card_declined') {
+          userMessage = 'Your card was declined. Please try a different payment method.';
+        } else if (error.code === 'insufficient_funds') {
+          userMessage = 'Insufficient funds. Please use a different payment method.';
+        } else if (error.code === 'expired_card') {
+          userMessage = 'Your card has expired. Please use a different payment method.';
+        } else if (error.code === 'incorrect_cvc') {
+          userMessage = 'Incorrect security code. Please check your card details.';
+        }
+        
+        this.showError(userMessage);
       } else if (paymentIntent.status === 'succeeded') {
         console.log('✅ Payment succeeded:', paymentIntent);
         
@@ -276,13 +296,16 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
           showConfirmButton: true
         });
 
+        // إرسال البيانات للمكون الأب
         this.paymentSuccess.emit({
           paymentIntentId: paymentIntent.id,
           amount: this.paymentAmount,
-          status: paymentIntent.status
+          status: paymentIntent.status,
+          clientSecret: paymentIntentResponse.clientSecret
         });
       } else {
-        throw new Error(`Payment status: ${paymentIntent.status}`);
+        console.log('⚠️ Unexpected payment status:', paymentIntent.status);
+        throw new Error(`Unexpected payment status: ${paymentIntent.status}`);
       }
 
     } catch (error: any) {
@@ -290,14 +313,25 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
       
       let errorMessage = 'An unexpected error occurred. Please try again.';
       
-      if (error.status === 401) {
-        errorMessage = 'Please log in again to continue.';
+      // معالجة أخطاء محددة
+      if (error.message) {
+        if (error.message.includes('Payment already processed')) {
+          errorMessage = 'This payment was already processed. Please create a new payment.';
+        } else if (error.message.includes('Authentication failed')) {
+          errorMessage = 'Authentication failed. Please log in again.';
+        } else if (error.message.includes('Payment method required')) {
+          errorMessage = 'Please check your card details and try again.';
+        } else if (error.message.includes('Network error')) {
+          errorMessage = 'Network error. Please check your internet connection.';
+        } else {
+          errorMessage = error.message;
+        }
+      } else if (error.status === 401) {
+        errorMessage = 'Authentication failed. Please log in again.';
       } else if (error.status === 400) {
         errorMessage = 'Invalid payment request. Please check your information.';
       } else if (error.status === 500) {
         errorMessage = 'Server error. Please try again later.';
-      } else if (error.message) {
-        errorMessage = error.message;
       }
       
       this.showError(errorMessage);
@@ -332,7 +366,7 @@ export class PaymentComponent implements OnInit, AfterViewInit, OnDestroy, OnCha
     this.paymentCancel.emit();
   }
 
-  // طريقة للإصلاح اليدوي
+  // إعادة المحاولة اليدوية
   retryInitialization() {
     console.log('🔄 Manual retry initialization...');
     this.isCardElementReady = false;

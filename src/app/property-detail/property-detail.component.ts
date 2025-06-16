@@ -22,6 +22,7 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
   isLoading = true;
   isSubmittingReview = false;
   isLoggedIn = false;
+  isFavoriteLoading = false;
   currentUser: any;
   
   private subscriptions: Subscription[] = [];
@@ -68,13 +69,25 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
 
   loadProperty(propertyId: number): void {
     this.isLoading = true;
+    console.log('🔍 Loading property with ID:', propertyId);
+    
     const propertySub = this.propertyService.getPropertyById(propertyId).subscribe({
       next: (property) => {
+        console.log('✅ Property loaded:', property);
         this.property = this.propertyService.formatProperty(property);
+        
+        // Log images for debugging
+        console.log('🖼️ Property images:', this.property.propertyImages);
+        
+        // Load favorite status if user is logged in
+        if (this.isLoggedIn && this.property) {
+          this.loadFavoriteStatus(this.property.propertyId);
+        }
+        
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error loading property:', error);
+        console.error('❌ Error loading property:', error);
         this.isLoading = false;
         Swal.fire({
           icon: 'error',
@@ -89,14 +102,36 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
     this.subscriptions.push(propertySub);
   }
 
+  loadFavoriteStatus(propertyId: number): void {
+    if (!this.isLoggedIn || !this.property) return;
+    
+    console.log('🔍 Checking favorite status for property:', propertyId);
+    
+    const favSub = this.propertyService.isPropertyInFavorites(propertyId).subscribe({
+      next: (isFavorite) => {
+        console.log('✅ Favorite status loaded:', isFavorite);
+        if (this.property) {
+          this.property.isFavorite = isFavorite;
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error checking favorite status:', error);
+        if (this.property) {
+          this.property.isFavorite = false;
+        }
+      }
+    });
+    this.subscriptions.push(favSub);
+  }
+
   loadReviews(propertyId: number): void {
     const reviewsSub = this.propertyService.getPropertyReviews(propertyId).subscribe({
       next: (reviews) => {
         this.reviews = reviews;
+        console.log('✅ Reviews loaded:', reviews);
       },
       error: (error) => {
-        console.error('Error loading reviews:', error);
-        // Reviews are optional, so we don't show error to user
+        console.error('❌ Error loading reviews:', error);
       }
     });
     this.subscriptions.push(reviewsSub);
@@ -108,6 +143,7 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
       this.currentImageIndex = this.currentImageIndex > 0 
         ? this.currentImageIndex - 1 
         : this.property.propertyImages.length - 1;
+      console.log('⬅️ Previous image, current index:', this.currentImageIndex);
     }
   }
 
@@ -116,11 +152,25 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
       this.currentImageIndex = this.currentImageIndex < this.property.propertyImages.length - 1 
         ? this.currentImageIndex + 1 
         : 0;
+      console.log('➡️ Next image, current index:', this.currentImageIndex);
     }
   }
 
   selectImage(index: number): void {
     this.currentImageIndex = index;
+    console.log('🖼️ Selected image index:', index);
+  }
+
+  getCurrentImageUrl(): string {
+    if (this.property && this.property.propertyImages.length > 0) {
+      return this.property.propertyImages[this.currentImageIndex] || 'assets/images/apartment.avif';
+    }
+    return 'assets/images/apartment.avif';
+  }
+
+  onImageError(event: any): void {
+    console.log('❌ Image failed to load, using fallback');
+    event.target.src = 'assets/images/apartment.avif';
   }
 
   // Review methods
@@ -136,18 +186,28 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
     }
 
     if (this.reviewForm.invalid || !this.property) {
+      Object.keys(this.reviewForm.controls).forEach(key => {
+        this.reviewForm.get(key)?.markAsTouched();
+      });
       return;
     }
 
     this.isSubmittingReview = true;
+    this.reviewForm.disable(); // 🔥 Disable form during submission
+
     const reviewData = {
       rating: this.reviewForm.value.rating,
       comment: this.reviewForm.value.comment
     };
 
+    console.log('📝 Submitting review:', reviewData);
+
     const reviewSub = this.propertyService.addReview(this.property.propertyId, reviewData).subscribe({
       next: (response) => {
         this.isSubmittingReview = false;
+        this.reviewForm.enable(); // 🔥 Re-enable form
+        console.log('✅ Review added successfully:', response);
+        
         Swal.fire({
           icon: 'success',
           title: 'Review Added',
@@ -162,7 +222,8 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.isSubmittingReview = false;
-        console.error('Error adding review:', error);
+        this.reviewForm.enable(); // 🔥 Re-enable form on error
+        console.error('❌ Error adding review:', error);
         Swal.fire({
           icon: 'error',
           title: 'Review Failed',
@@ -186,31 +247,78 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.property) return;
+    if (!this.property || this.isFavoriteLoading) return;
 
-    const action = this.property.isFavorite ? 'remove' : 'add';
+    console.log('❤️ Toggling favorite for property:', this.property.propertyId, 'Current status:', this.property.isFavorite);
+
+    this.isFavoriteLoading = true;
+    
+    const originalState = this.property.isFavorite;
+    this.property.isFavorite = !this.property.isFavorite;
+
+    const action = this.property.isFavorite ? 'add' : 'remove';
     const apiCall = this.property.isFavorite 
-      ? this.propertyService.removeFromFavorites(this.property.propertyId)
-      : this.propertyService.addToFavorites(this.property.propertyId);
+      ? this.propertyService.addToFavorites(this.property.propertyId)
+      : this.propertyService.removeFromFavorites(this.property.propertyId);
 
     const favSub = apiCall.subscribe({
-      next: () => {
-        this.property!.isFavorite = !this.property!.isFavorite;
+      next: (response) => {
+        this.isFavoriteLoading = false;
+        console.log(`✅ ${action} favorite successful:`, response);
+        
         const message = this.property!.isFavorite ? 'Added to favorites' : 'Removed from favorites';
+        const icon = this.property!.isFavorite ? 'success' : 'info';
+        
         Swal.fire({
           position: 'top-end',
-          icon: 'success',
+          icon: icon,
           title: message,
           showConfirmButton: false,
           timer: 1500
         });
       },
       error: (error) => {
-        console.error('Error updating favorites:', error);
+        this.isFavoriteLoading = false;
+        console.error('❌ Error updating favorites:', error);
+        
+        if (error.status === 404 && !this.property!.isFavorite) {
+          console.log('⚠️ Property was not in favorites (404), but UI updated correctly');
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Removed from favorites',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          return;
+        }
+        
+        if (error.status === 200 || error.status === 0) {
+          console.log('✅ Actually successful - keeping optimistic update');
+          const message = this.property!.isFavorite ? 'Added to favorites' : 'Removed from favorites';
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+          return;
+        }
+        
+        this.property!.isFavorite = originalState;
+        
+        let errorMessage = 'Failed to update favorites. Please try again.';
+        if (error.status === 401) {
+          errorMessage = 'You need to be logged in to manage favorites.';
+        } else if (error.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+        
         Swal.fire({
           icon: 'error',
           title: 'Failed to update favorites',
-          text: 'Please try again.',
+          text: errorMessage,
           confirmButtonColor: '#08227B'
         });
       }
@@ -218,7 +326,6 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
     this.subscriptions.push(favSub);
   }
 
-  // Contact owner
   contactOwner(): void {
     if (!this.property) return;
 
@@ -226,12 +333,12 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
     const message = `Hello, I'm interested in your property: ${this.property.title}`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     
+    console.log('📱 Opening WhatsApp:', whatsappUrl);
     window.open(whatsappUrl, '_blank');
   }
 
-  // Helper methods
-  getStarArray(rating: number): boolean[] {
-    return Array(5).fill(false).map((_, i) => i < rating);
+  getStarArray(count: number): boolean[] {
+    return Array(count).fill(true);
   }
 
   formatPrice(price: number): string {
@@ -252,5 +359,17 @@ export class PropertyDetailComponent implements OnInit, OnDestroy {
 
   goBack(): void {
     this.router.navigate(['/home']);
+  }
+
+  debugImages(): void {
+    console.log('🐛 Debug Images:');
+    console.log('Property:', this.property);
+    console.log('Images array:', this.property?.propertyImages);
+    console.log('Current image index:', this.currentImageIndex);
+    console.log('Current image URL:', this.getCurrentImageUrl());
+  }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
   }
 }

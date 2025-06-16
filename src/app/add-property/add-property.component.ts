@@ -24,7 +24,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   
   // Payment related
   showPaymentModal = false;
-  paymentAmount = 50; // Property listing fee in USD
+  paymentAmount = 1; // $1 للاختبار
   paymentCompleted = false;
   paymentData: any = null;
   
@@ -39,6 +39,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   
   // Property types
   propertyTypes = ['Apartment', 'House', 'Villa', 'Office', 'Commercial', 'Land'];
+  
+  // Listing types - إضافة جديدة
+  listingTypes = ['For Rent', 'For Sale', 'For Investment'];
   
   // Egyptian cities
   cities = [
@@ -69,16 +72,12 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Check authentication
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/log-in']);
       return;
     }
 
-    // Initialize form
     this.initializeForm();
-    
-    // Load amenities
     this.loadAmenities();
   }
 
@@ -98,6 +97,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
       street: ['', Validators.required],
       city: ['', Validators.required],
       governate: ['', Validators.required],
+      // ✅ إضافة الحقول المطلوبة
+      locationUrl: ['', [Validators.required, Validators.pattern('https?://.+')]],
+      listingType: ['', Validators.required],
       internalAmenitiesIds: this.formBuilder.array([]),
       externalAmenitiesIds: this.formBuilder.array([]),
       accessibilityAmenitiesIds: this.formBuilder.array([])
@@ -107,34 +109,34 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   loadAmenities(): void {
     this.isLoading = true;
     
-    // Load internal amenities
     const internalSub = this.amenitiesService.getInternalAmenities().subscribe({
       next: (amenities) => {
         this.internalAmenities = amenities.filter(a => a.name !== 'string');
+        console.log('✅ Internal amenities loaded:', this.internalAmenities.length);
       },
       error: (error) => {
-        console.error('Error loading internal amenities:', error);
+        console.error('❌ Error loading internal amenities:', error);
       }
     });
     
-    // Load external amenities
     const externalSub = this.amenitiesService.getExternalAmenities().subscribe({
       next: (amenities) => {
         this.externalAmenities = amenities.filter(a => a.name !== 'string');
+        console.log('✅ External amenities loaded:', this.externalAmenities.length);
       },
       error: (error) => {
-        console.error('Error loading external amenities:', error);
+        console.error('❌ Error loading external amenities:', error);
       }
     });
     
-    // Load accessibility amenities
     const accessibilitySub = this.amenitiesService.getAccessibilityAmenities().subscribe({
       next: (amenities) => {
         this.accessibilityAmenities = amenities.filter(a => a.name !== 'string');
         this.isLoading = false;
+        console.log('✅ Accessibility amenities loaded:', this.accessibilityAmenities.length);
       },
       error: (error) => {
-        console.error('Error loading accessibility amenities:', error);
+        console.error('❌ Error loading accessibility amenities:', error);
         this.isLoading = false;
       }
     });
@@ -156,10 +158,12 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     
     if (event.target.checked) {
       formArray.push(this.formBuilder.control(amenityId));
+      console.log(`✅ Added ${type} amenity:`, amenityId);
     } else {
       const index = formArray.controls.findIndex(control => control.value === amenityId);
       if (index !== -1) {
         formArray.removeAt(index);
+        console.log(`❌ Removed ${type} amenity:`, amenityId);
       }
     }
   }
@@ -181,7 +185,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     this.imageFiles = files;
     this.imagePreviews = [];
 
-    // Generate previews
     files.forEach(file => {
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
@@ -191,15 +194,34 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         reader.readAsDataURL(file);
       }
     });
+
+    console.log('✅ Selected', files.length, 'images');
   }
 
   // Remove image preview
   removeImage(index: number): void {
     this.imageFiles.splice(index, 1);
     this.imagePreviews.splice(index, 1);
+    console.log('❌ Removed image at index:', index);
   }
 
-  // Show payment modal - UPDATED VERSION
+  // ✅ Generate Google Maps URL automatically
+  generateLocationUrl(): void {
+    const formValues = this.propertyForm.value;
+    if (formValues.street && formValues.city && formValues.governate) {
+      const address = `${formValues.street}, ${formValues.city}, ${formValues.governate}, Egypt`;
+      const encodedAddress = encodeURIComponent(address);
+      const googleMapsUrl = `https://maps.google.com/?q=${encodedAddress}`;
+      
+      this.propertyForm.patchValue({
+        locationUrl: googleMapsUrl
+      });
+      
+      console.log('✅ Generated location URL:', googleMapsUrl);
+    }
+  }
+
+  // Show payment modal
   showPayment(): void {
     if (this.propertyForm.invalid) {
       this.submitted = true;
@@ -217,13 +239,11 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('🔥 Opening payment modal...');
+    console.log('🔥 Opening payment modal for $', this.paymentAmount, '...');
     this.showPaymentModal = true;
     
-    // ⭐ إضافة دي - انتظار للـ modal يظهر وبعدين trigger للـ Stripe initialization
     setTimeout(() => {
-      console.log('🔥 Payment modal is now visible, ready for Stripe initialization');
-      // الـ PaymentComponent هيستقبل الـ showPayment = true ويعمل initialize تلقائياً
+      console.log('🔥 Payment modal is now visible');
     }, 300);
   }
 
@@ -234,7 +254,14 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     this.paymentData = paymentData;
     this.showPaymentModal = false;
     
-    // Now submit the property
+    Swal.fire({
+      icon: 'success',
+      title: 'Payment Successful!',
+      text: 'Now creating your property listing...',
+      timer: 2000,
+      showConfirmButton: false
+    });
+    
     this.submitProperty();
   }
 
@@ -249,57 +276,59 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     this.isSubmitting = true;
     console.log('🚀 Submitting property to API...');
 
-    // Prepare form data
+    // تحضير FormData
     const formData = new FormData();
     const formValues = this.propertyForm.value;
 
-    // Add basic property data
-    Object.keys(formValues).forEach(key => {
-      if (key.includes('AmenitiesIds')) {
-        // Handle amenities arrays
-        const amenityIds = formValues[key];
-        amenityIds.forEach((id: number, index: number) => {
-          formData.append(`${key}[${index}]`, id.toString());
-        });
-      } else {
-        formData.append(key, formValues[key]);
-      }
+    // ✅ إضافة جميع الحقول المطلوبة بالأسماء الصحيحة
+    formData.append('Title', formValues.title);
+    formData.append('Description', formValues.description);
+    formData.append('Price', formValues.price.toString());
+    formData.append('PropertyType', formValues.propertyType);
+    formData.append('Size', formValues.size.toString());
+    formData.append('Bedrooms', formValues.bedrooms.toString());
+    formData.append('Bathrooms', formValues.bathrooms.toString());
+    formData.append('Street', formValues.street);
+    formData.append('City', formValues.city);
+    formData.append('Governate', formValues.governate);
+    formData.append('LocationUrl', formValues.locationUrl); // ✅ مطلوب
+    formData.append('ListingType', formValues.listingType); // ✅ مطلوب
+
+    // إضافة المرافق
+    formValues.internalAmenitiesIds.forEach((id: number, index: number) => {
+      formData.append(`InternalAmenityIds[${index}]`, id.toString());
+    });
+    formValues.externalAmenitiesIds.forEach((id: number, index: number) => {
+      formData.append(`ExternalAmenityIds[${index}]`, id.toString());
+    });
+    formValues.accessibilityAmenitiesIds.forEach((id: number, index: number) => {
+      formData.append(`AccessibilityAmenityIds[${index}]`, id.toString());
     });
 
-    // Add images
-    this.imageFiles.forEach((file, index) => {
-      formData.append(`images`, file);
+    // إضافة الصور
+    this.imageFiles.forEach((file) => {
+      formData.append(`Images`, file);
     });
 
-    // Add payment information
+    // إضافة بيانات الدفع
     if (this.paymentData) {
       formData.append('paymentIntentId', this.paymentData.paymentIntentId);
-      formData.append('paymentAmount', this.paymentData.amount.toString());
+      if (this.paymentData.amount) {
+        formData.append('paymentAmount', this.paymentData.amount.toString());
+      }
     }
 
-    console.log('📤 Sending form data:', {
-      propertyData: formValues,
-      imageCount: this.imageFiles.length,
-      paymentData: this.paymentData
-    });
+    console.log('📤 Sending property data with all required fields');
 
-    // Submit to API
     const submitSub = this.propertyService.addProperty(formData).subscribe({
       next: (response) => {
         this.isSubmitting = false;
         console.log('✅ Property created successfully:', response);
         
-        // تحديد نوع الرسالة حسب الاستجابة
-        const isRealAPI = !response.message?.includes('Mock');
-        const title = isRealAPI ? 'Property Listed Successfully' : 'Payment Processed Successfully';
-        const text = isRealAPI 
-          ? 'Your property has been listed successfully and payment has been processed!'
-          : 'Your payment was processed successfully! The property listing is being processed.';
-        
         Swal.fire({
           icon: 'success',
-          title: title,
-          text: text,
+          title: 'Property Listed Successfully!',
+          text: 'Your property has been listed successfully and payment has been processed!',
           confirmButtonColor: '#08227B'
         }).then(() => {
           this.router.navigate(['/home']);
@@ -310,13 +339,15 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         console.error('❌ Error adding property:', error);
         
         let errorMessage = 'Failed to add property. Please try again.';
+        
         if (error.error && error.error.message) {
           errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
         }
 
-        // إضافة معلومات عن الدفع إذا كان نجح
         const paymentNote = this.paymentData ? 
-          '\n\nNote: Your payment was processed successfully. Please contact support if needed.' : '';
+          '\n\nNote: Your payment was processed successfully. Please contact support with your payment ID if needed.' : '';
 
         Swal.fire({
           icon: 'error',
@@ -332,12 +363,12 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     this.subscriptions.push(submitSub);
   }
 
-  // Submit form (now opens payment modal)
+  // Submit form (opens payment modal)
   onSubmit(): void {
     this.showPayment();
   }
 
-  // Scroll to first error
+  // Scroll to first error field
   scrollToFirstError(): void {
     const firstErrorField = Object.keys(this.propertyForm.controls).find(
       key => this.propertyForm.get(key)?.invalid
@@ -352,9 +383,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Go back to home
+  // Go back to home with confirmation
   goBack(): void {
-    if (this.propertyForm.dirty) {
+    if (this.propertyForm.dirty && !this.isSubmitting) {
       Swal.fire({
         title: 'Discard Changes?',
         text: 'You have unsaved changes. Are you sure you want to leave?',

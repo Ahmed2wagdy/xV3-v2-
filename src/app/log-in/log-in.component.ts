@@ -27,7 +27,6 @@ export class LogInComponent implements OnInit {
   ngOnInit(): void {
     // Check if user is already logged in
     if (this.authService.isLoggedIn()) {
-      // User is already logged in, redirect to home
       this.router.navigate(['/home']);
       return;
     }
@@ -50,6 +49,7 @@ export class LogInComponent implements OnInit {
     }
 
     this.isLoading = true;
+    this.loginForm.disable(); // 🔥 Disable form during submission
 
     // Prepare login request
     const loginRequest: LoginRequest = {
@@ -61,6 +61,7 @@ export class LogInComponent implements OnInit {
     this.authService.login(loginRequest).subscribe({
       next: (response) => {
         this.isLoading = false;
+        this.loginForm.enable(); // 🔥 Re-enable form
         
         // Show success message
         Swal.fire({
@@ -76,6 +77,7 @@ export class LogInComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
+        this.loginForm.enable(); // 🔥 Re-enable form on error
         console.error('Login error:', error);
         
         // Handle different types of errors

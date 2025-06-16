@@ -34,13 +34,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router
   ) {
-    // Load dark mode preference
     this.isDarkMode = localStorage.getItem('darkMode') === 'true';
     this.applyTheme();
   }
 
   ngOnInit(): void {
-    // Check authentication
     if (!this.authService.isLoggedIn()) {
       this.router.navigate(['/log-in']);
       return;
@@ -118,7 +116,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         Swal.fire({
           icon: 'warning',
@@ -129,7 +126,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         Swal.fire({
           icon: 'warning',
@@ -143,7 +139,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.selectedFile = file;
       this.isImageDeleted = false;
       
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.imagePreview = e.target.result;
@@ -168,7 +163,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.imagePreview = null;
         this.isImageDeleted = true;
         
-        // Clear file input
         const fileInput = document.getElementById('profileImageInput') as HTMLInputElement;
         if (fileInput) {
           fileInput.value = '';
@@ -186,17 +180,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     this.isUpdatingProfile = true;
+    this.profileForm.disable(); // 🔥 Disable form during submission
 
-    // Prepare form data
     const formData = new FormData();
     const formValues = this.profileForm.value;
     
-    // Add required fields
     formData.append('FirstName', formValues.firstName);
     formData.append('LastName', formValues.lastName);
     formData.append('Email', formValues.email);
     
-    // Add optional fields
     if (formValues.phoneNumber) {
       formData.append('PhoneNumber', formValues.phoneNumber);
     } else {
@@ -209,25 +201,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
       formData.append('City', '');
     }
 
-    // Handle image updates
     if (this.selectedFile) {
-      // New image selected
       formData.append('Image', this.selectedFile);
     } else if (this.isImageDeleted) {
-      // Image was deleted - send empty string or null
       formData.append('ImageUrl', '');
     } else if (this.currentUser?.imageUrl) {
-      // Keep existing image
       formData.append('ImageUrl', this.currentUser.imageUrl);
     } else {
-      // No image
       formData.append('ImageUrl', '');
     }
 
     const updateSub = this.authService.updateUserProfile(formData).subscribe({
       next: (response) => {
         this.isUpdatingProfile = false;
+        this.profileForm.enable(); // 🔥 Re-enable form
         this.showEditModal = false;
+        
         Swal.fire({
           icon: 'success',
           title: 'Profile Updated',
@@ -235,13 +224,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
           showConfirmButton: false,
           timer: 1500
         });
+        
         this.selectedFile = null;
         this.isImageDeleted = false;
-        // Reload profile to get updated data
         this.loadUserProfile();
       },
       error: (error) => {
         this.isUpdatingProfile = false;
+        this.profileForm.enable(); // 🔥 Re-enable form on error
         console.error('Error updating profile:', error);
         
         let errorMessage = 'Failed to update profile. Please try again.';
@@ -272,6 +262,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     this.isChangingPassword = true;
+    this.passwordForm.disable(); // 🔥 Disable form during submission
 
     const passwordData = {
       oldPassword: this.passwordForm.value.oldPassword,
@@ -282,8 +273,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const passwordSub = this.authService.changePassword(passwordData).subscribe({
       next: (response) => {
         this.isChangingPassword = false;
+        this.passwordForm.enable(); // 🔥 Re-enable form
         this.showPasswordModal = false;
         this.passwordForm.reset();
+        
         Swal.fire({
           icon: 'success',
           title: 'Password Changed',
@@ -294,6 +287,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.isChangingPassword = false;
+        this.passwordForm.enable(); // 🔥 Re-enable form on error
         console.error('Error changing password:', error);
         
         let errorMessage = 'Failed to change password. Please try again.';
@@ -316,7 +310,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   getUserImageUrl(): string {
-    // Always return unkown.png as base (matching the actual filename)
     return 'assets/images/unkown.png';
   }
 
@@ -374,7 +367,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Show second confirmation
         Swal.fire({
           title: 'Final Confirmation',
           text: 'This action cannot be undone. Do you want to continue?',
@@ -386,7 +378,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
           cancelButtonText: 'Cancel'
         }).then((finalResult) => {
           if (finalResult.isConfirmed) {
-            // Call delete account API (would need to be implemented)
             Swal.fire({
               icon: 'info',
               title: 'Coming Soon',
@@ -423,7 +414,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.isImageDeleted = false;
     this.imagePreview = this.currentUser?.imageUrl || null;
     
-    // Clear file input
     const fileInput = document.getElementById('profileImageInput') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';

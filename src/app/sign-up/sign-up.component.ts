@@ -28,7 +28,6 @@ export class SignUpComponent implements OnInit {
   ngOnInit(): void {
     // Check if user is already logged in
     if (this.authService.isLoggedIn()) {
-      // User is already logged in, redirect to home
       this.router.navigate(['/home']);
       return;
     }
@@ -85,6 +84,7 @@ export class SignUpComponent implements OnInit {
     }
 
     this.isLoading = true;
+    this.signupForm.disable(); // 🔥 Disable form during submission
 
     // Prepare signup request according to API structure
     const formValues = this.signupForm.value;
@@ -104,6 +104,7 @@ export class SignUpComponent implements OnInit {
     this.authService.signup(signupRequest).subscribe({
       next: (response) => {
         this.isLoading = false;
+        this.signupForm.enable(); // 🔥 Re-enable form
         
         // Show success message and redirect to OTP verification
         Swal.fire({
@@ -117,13 +118,14 @@ export class SignUpComponent implements OnInit {
           this.router.navigate(['/otp-verification'], { 
             queryParams: { 
               email: formValues.email,
-              type: 'signup' // يمكن استخدامه لتمييز نوع OTP verification
+              type: 'signup'
             } 
           });
         });
       },
       error: (error) => {
         this.isLoading = false;
+        this.signupForm.enable(); // 🔥 Re-enable form on error
         console.error('Signup error:', error);
         
         // Handle different types of errors

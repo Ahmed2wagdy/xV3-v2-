@@ -1,4 +1,4 @@
-<!-- Signup Component HTML with loading states -->
+<!-- Signup Component HTML - Fixed disabled attributes -->
 <div class="container">
     <!-- Left side (Form inputs) -->
     <div class="form-side">
@@ -17,7 +17,6 @@
                 placeholder="ex: Ahmed"
                 class="form-control"
                 [ngClass]="{'invalid': submitted && f['firstName'].errors}"
-                [disabled]="isLoading"
               >
               <div *ngIf="submitted && f['firstName'].errors" class="error-message">
                 <div *ngIf="f['firstName'].errors['required']">First name is required</div>
@@ -34,7 +33,6 @@
                 placeholder="ex: Wagdy"
                 class="form-control"
                 [ngClass]="{'invalid': submitted && f['lastName'].errors}"
-                [disabled]="isLoading"
               >
               <div *ngIf="submitted && f['lastName'].errors" class="error-message">
                 <div *ngIf="f['lastName'].errors['required']">Last name is required</div>
@@ -53,7 +51,6 @@
               placeholder="ex: ahmedwagdy@email.com"
               class="form-control"
               [ngClass]="{'invalid': submitted && f['email'].errors}"
-              [disabled]="isLoading"
             >
             <div *ngIf="submitted && f['email'].errors" class="error-message">
               <div *ngIf="f['email'].errors['required']">Email is required</div>
@@ -66,7 +63,7 @@
             <label for="phone">Phone Number</label>
             <div class="phone-input">
               <div class="country-code">
-                <select formControlName="countryCode" class="code-select" [disabled]="isLoading">
+                <select formControlName="countryCode" class="code-select">
                   <option value="+20">+20</option>
                   <option value="+1">+1</option>
                   <option value="+44">+44</option>
@@ -81,7 +78,6 @@
                 placeholder="ex: 1007559638"
                 class="form-control phone"
                 [ngClass]="{'invalid': submitted && f['phone'].errors}"
-                [disabled]="isLoading"
               >
             </div>
             <div *ngIf="submitted && f['phone'].errors" class="error-message">
@@ -94,14 +90,14 @@
           <div class="form-group">
             <label for="city">City</label>
             <div class="dropdown">
-              <select formControlName="city" id="city" class="form-control" [disabled]="isLoading">
+              <select formControlName="city" id="city" class="form-control">
                 <option value="" disabled selected>ex: Cairo</option>
                 <option value="Cairo">Cairo</option>
                 <option value="Alexandria">Alexandria</option>
                 <option value="Giza">Giza</option>
                 <option value="Luxor">Luxor</option>
                 <option value="Aswan">Aswan</option>
-                <option value="Sharm El Sheikh">Sharm El Sheikh</option>
+                <option value="Mansoura">Mansoura</option>
                 <option value="Hurghada">Hurghada</option>
               </select>
             </div>
@@ -110,7 +106,6 @@
             </div>
           </div>
   
-          <!-- Date of birth -->
           <!-- Date of birth -->
           <div class="form-group">
             <label for="dob">Birth of date</label>
@@ -121,7 +116,6 @@
                 formControlName="dob" 
                 class="form-control"
                 [ngClass]="{'invalid': submitted && f['dob'].errors}"
-                [disabled]="isLoading"
               >
               <div class="calendar-icon">
                 <i class="bi bi-calendar"></i>
@@ -143,9 +137,8 @@
                 placeholder="••••••••"
                 class="form-control"
                 [ngClass]="{'invalid': submitted && f['password'].errors}"
-                [disabled]="isLoading"
               >
-              <div class="toggle-password" (click)="togglePasswordVisibility()" *ngIf="!isLoading">
+              <div class="toggle-password" (click)="togglePasswordVisibility()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path *ngIf="!showPassword" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <path *ngIf="showPassword" d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -171,9 +164,8 @@
                 placeholder="••••••••"
                 class="form-control"
                 [ngClass]="{'invalid': submitted && f['confirmPassword'].errors}"
-                [disabled]="isLoading"
               >
-              <div class="toggle-password" (click)="toggleConfirmPasswordVisibility()" *ngIf="!isLoading">
+              <div class="toggle-password" (click)="toggleConfirmPasswordVisibility()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path *ngIf="!showConfirmPassword" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <path *ngIf="showConfirmPassword" d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -196,7 +188,6 @@
                 id="terms"
                 formControlName="terms" 
                 class="checkbox"
-                [disabled]="isLoading"
               >
               <label for="terms" class="terms-label">I understood the <span class="terms-link">terms & policy</span>.</label>
             </div>
@@ -235,7 +226,7 @@
         <!-- Login link -->
         <div class="login-link">
           <span>Do you have an account?</span>
-          <a [routerLink]="['/log-in']" *ngIf="!isLoading">Login</a>
+          <a [routerLink]="['/log-in']">Login</a>
         </div>
       </div>
     </div>
@@ -270,12 +261,5 @@
     .google-btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-    }
-    
-    .form-control:disabled,
-    .code-select:disabled,
-    .checkbox:disabled {
-      background-color: #f5f5f5;
-      opacity: 0.6;
     }
   </style>

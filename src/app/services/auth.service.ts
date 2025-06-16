@@ -219,7 +219,7 @@ export class AuthService {
         } else if (error.status === 500) {
           errorMessage = 'Server error. Please try again later.';
         } else if (error.status === 409) {
-          errorMessage = 'An account with this email already exists.';
+          errorMessage = 'This email address is already registered.<br>Please try logging in or use a different email.';
         }
         
         throw new Error(errorMessage);
