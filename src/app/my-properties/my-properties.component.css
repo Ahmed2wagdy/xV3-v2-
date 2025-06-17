@@ -1,0 +1,498 @@
+/* My Properties Component Styles */
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Property Card Styles */
+.property-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(8, 34, 123, 0.15) !important;
+}
+
+.property-img {
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.property-header {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.property-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.property-details {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.property-details .row {
+  margin: 0;
+}
+
+.property-details .col {
+  padding: 0 5px;
+}
+
+/* Empty State */
+.empty-state {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: #08227B;
+  border-color: #08227B;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: #061a5f;
+  border-color: #061a5f;
+}
+
+.btn-outline-primary {
+  color: #08227B;
+  border-color: #08227B;
+}
+
+.btn-outline-primary:hover {
+  background-color: #08227B;
+  border-color: #08227B;
+  color: white;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #000;
+}
+
+.btn-warning:hover {
+  background-color: #ffca2c;
+  border-color: #ffc720;
+  color: #000;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Badge Styles */
+.badge.bg-primary {
+  background-color: #08227B !important;
+}
+
+.badge.bg-success {
+  background-color: #28a745 !important;
+}
+
+/* Modal Styles */
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block !important;
+}
+
+.modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #08227B, #061a5f);
+  color: white;
+  border-radius: 15px 15px 0 0;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.btn-close {
+  filter: invert(1);
+}
+
+.form-control:focus {
+  border-color: #08227B;
+  box-shadow: 0 0 0 0.2rem rgba(8, 34, 123, 0.25);
+}
+
+.form-select:focus {
+  border-color: #08227B;
+  box-shadow: 0 0 0 0.2rem rgba(8, 34, 123, 0.25);
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .property-card {
+    margin-bottom: 1rem;
+  }
+  
+  .property-header {
+    min-height: auto;
+  }
+  
+  .modal-dialog {
+    margin: 10px;
+  }
+  
+}
+/* Improved Property Card Styles - أضف هذا في my-properties.component.css */
+
+/* Property Card */
+.property-card {
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: white;
+  position: relative;
+}
+
+.property-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(8, 34, 123, 0.15) !important;
+}
+
+/* Image Container */
+.property-image-container {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.property-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.property-card:hover .property-img {
+  transform: scale(1.05);
+}
+
+/* Badges Overlay */
+.badges-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 2;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  border: none;
+}
+
+.badge-type {
+  background: rgba(8, 34, 123, 0.9);
+  color: white;
+}
+
+.badge-status {
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Action Overlay */
+.action-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 3;
+}
+
+.property-card:hover .action-overlay {
+  opacity: 1;
+}
+
+.action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  color: white;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+.btn-view {
+  background: rgba(8, 34, 123, 0.9);
+}
+
+.btn-view:hover {
+  background: rgba(8, 34, 123, 1);
+}
+
+.btn-edit {
+  background: rgba(255, 193, 7, 0.9);
+  color: #000 !important;
+}
+
+.btn-edit:hover {
+  background: rgba(255, 193, 7, 1);
+}
+
+.btn-delete {
+  background: rgba(220, 53, 69, 0.9);
+}
+
+.btn-delete:hover {
+  background: rgba(220, 53, 69, 1);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Property Content */
+.property-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Header */
+.property-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.property-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.property-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.property-location i {
+  font-size: 0.8rem;
+  color: #08227B;
+}
+
+/* Price */
+.property-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.price-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #08227B;
+}
+
+.price-label {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+/* Stats */
+.property-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid #ecf0f1;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.stat-item i {
+  font-size: 1rem;
+  color: #08227B;
+}
+
+.stat-item span {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Footer */
+.property-footer {
+  margin-top: auto;
+}
+
+.property-footer small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.property-footer i {
+  color: #08227B;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .property-image-container {
+    height: 180px;
+  }
+  
+  .property-content {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .property-title {
+    font-size: 1rem;
+  }
+  
+  .price-amount {
+    font-size: 1.3rem;
+  }
+  
+  .action-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  .property-stats {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .stat-item {
+    flex-direction: row;
+    justify-content: center;
+    min-width: calc(50% - 4px);
+  }
+}
+
+/* Hover Effects */
+@media (hover: hover) {
+  .action-overlay {
+    opacity: 0;
+  }
+  
+  .property-card:hover .action-overlay {
+    opacity: 1;
+  }
+}
+
+/* Touch devices - always show buttons */
+@media (hover: none) {
+  .action-overlay {
+    opacity: 1;
+    position: static;
+    transform: none;
+    justify-content: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #ecf0f1;
+  }
+  
+  .property-content {
+    padding-bottom: 12px;
+  }
+}

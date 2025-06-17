@@ -615,4 +615,62 @@ export class PropertyService {
     };
     return this.getProperties(searchFilters);
   }
+  // إضافة هذا الـ method في PropertyService
+
+// Get user's own properties
+getUserProperties(): Observable<Property[]> {
+  console.log('🔍 Fetching user properties...');
+  
+  return this.http.get<any>(`${this.apiUrl}/Properties/get-user-properties`, {
+    headers: this.getAuthHeaders()
+  }).pipe(
+    tap((response) => {
+      console.log('✅ User properties API raw response:', response);
+    }),
+    map((response: any) => {
+      // Handle different possible response structures
+      let properties: any[] = [];
+      
+      if (response) {
+        if (response.$values) {
+          // Response has $values wrapper
+          properties = response.$values;
+        } else if (response.data && response.data.$values) {
+          // Response has data.$values wrapper
+          properties = response.data.$values;
+        } else if (Array.isArray(response)) {
+          // Response is direct array
+          properties = response;
+        } else if (response.data && Array.isArray(response.data)) {
+          // Response has data array
+          properties = response.data;
+        } else {
+          console.log('⚠️ Unexpected response structure:', response);
+          properties = [];
+        }
+      }
+      
+      const formattedProperties = properties.map(property => this.formatProperty(property));
+      console.log('✅ Formatted user properties:', formattedProperties);
+      
+      return formattedProperties;
+    }),
+    catchError((error) => {
+      console.error('❌ Error loading user properties:', error);
+      
+      if (error.status === 404) {
+        console.log('📝 No properties found for user (404)');
+        return of([]); // Return empty array if no properties found
+      } else if (error.status === 401) {
+        console.error('🔐 Authentication error - user needs to login');
+        throw new Error('Please login again to view your properties.');
+      } else if (error.status === 500) {
+        console.error('🔥 Server error');
+        throw new Error('Server error. Please try again later.');
+      }
+      
+      throw new Error('Failed to load your properties. Please try again.');
+    })
+  );
+}
 }

@@ -14,7 +14,7 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center">
       <div class="logo">
-        <h2 class="fw-bold">X-rental</h2>
+        <h2 class="fw-bold">Dizon</h2>
       </div>
       <div class="nav-links">
         <ul class="list-unstyled d-flex gap-4 mb-0">
@@ -28,12 +28,15 @@
                (click)="!isLoggedIn && showLoginAlert()" 
                class="text-decoration-none text-dark pointer">Favorite</a>
           </li>
-          <li><a href="#" class="text-decoration-none text-dark">about Us</a></li>
           <li>
-            <a [routerLink]="isLoggedIn ? ['/chat-bot'] : null" 
-               (click)="!isLoggedIn && showLoginAlert()" 
-               class="text-decoration-none text-dark pointer">chat Bot</a>
-          </li>
+  <a [routerLink]="['/about-us']" 
+     class="text-decoration-none text-dark">about Us</a>
+</li>
+<li>
+  <a [routerLink]="isLoggedIn ? ['/chat-bot'] : null" 
+     (click)="!isLoggedIn && showLoginAlert()" 
+     class="text-decoration-none text-dark pointer">chat Bot</a>
+</li>
         </ul>
       </div>
       
@@ -42,23 +45,37 @@
         <a [routerLink]="['/sign-up']" class="btn btn-outline-dark rounded-pill me-2">sign up</a>
         <a [routerLink]="['/log-in']" class="btn btn-primary rounded-pill">login</a>
       </div>
-      
-      <div *ngIf="isLoggedIn" class="user-profile d-flex align-items-center">
-        <span class="me-2">Welcome, {{ userName }}</span>
-        <div class="dropdown">
-          <a href="#" class="dropdown-toggle text-decoration-none" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="assets/images/unknown.png" alt="Profile" class="rounded-circle" width="40" height="40">
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-            <li><a class="dropdown-item" [routerLink]="['/profile']">My Profile</a></li>
-            <li><a class="dropdown-item" [routerLink]="['/my-properties']">My Properties</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item pointer" (click)="logout()">Logout</a></li>
-          </ul>
-        </div>
+    <div *ngIf="isLoggedIn" class="user-profile d-flex align-items-center">
+  <span class="me-2">Welcome, {{ userName }}</span>
+  <div class="dropdown">
+    <a href="#" class="dropdown-toggle text-decoration-none" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <div class="profile-image-container-header">
+        <!-- الطبقة الأولى (السفلى): الصورة الافتراضية -->
+        <img 
+          src="assets/images/unknown.png" 
+          alt="Profile Picture" 
+          class="profile-image-header default-image"
+        >
+        <!-- الطبقة الثانية (الوسطى): صورة المستخدم -->
+        <img 
+          *ngIf="hasUserImage()"
+          [src]="getUserActualImageUrl()" 
+          alt="User Profile Picture" 
+          class="profile-image-header user-image"
+          onerror="this.style.display='none'"
+        >
       </div>
-    </div>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+      <li><a class="dropdown-item" [routerLink]="['/profile']">My Profile</a></li>
+      <li><a class="dropdown-item" [routerLink]="['/my-properties']">My Properties</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item pointer" (click)="logout()">Logout</a></li>
+    </ul>
   </div>
+</div>
+    </div>
+    </div>
 </header>
 
 <!-- Hero Section with Search -->
@@ -245,72 +262,258 @@
       </p>
     </div>
   </div>
+<!-- Footer Section - أضف هذا الكود في نهاية ملف HTML قبل إغلاق آخر </section> -->
 
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <!-- Company Info -->
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="logo-footer">X-rental</div>
+        <p class="footer-description">
+          Your trusted partner in finding the perfect property. We connect people with their dream homes and investment opportunities across Egypt.
+        </p>
+        <div class="social-icons">
+          <a href="#" class="social-icon" title="Facebook">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="#" class="social-icon" title="Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="#" class="social-icon" title="Twitter">
+            <i class="bi bi-twitter"></i>
+          </a>
+          <a href="#" class="social-icon" title="LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="#" class="social-icon" title="YouTube">
+            <i class="bi bi-youtube"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Properties</a></li>
+          <li><a href="#">Add Property</a></li>
+          <li><a href="#">Favorites</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Services -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h5>Services</h5>
+        <ul>
+          <li><a href="#">Buy Property</a></li>
+          <li><a href="#">Rent Property</a></li>
+          <li><a href="#">Sell Property</a></li>
+          <li><a href="#">Property Management</a></li>
+          <li><a href="#">Investment Advice</a></li>
+          <li><a href="#">Market Analysis</a></li>
+        </ul>
+      </div>
+      
+      <!-- Property Types -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h5>Property Types</h5>
+        <ul>
+          <li><a href="#">Apartments</a></li>
+          <li><a href="#">Houses</a></li>
+          <li><a href="#">Villas</a></li>
+          <li><a href="#">Offices</a></li>
+          <li><a href="#">Commercial</a></li>
+          <li><a href="#">Land</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Info -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h5>Contact Info</h5>
+        <ul>
+          <li><a href="tel:+201234567890">
+            <i class="bi bi-telephone me-2"></i>+20 123 456 7890
+          </a></li>
+          <li><a href="mailto:info@x-rental.com">
+            <i class="bi bi-envelope me-2"></i>infox-rental.com
+          </a></li>
+          <li><a href="#">
+            <i class="bi bi-geo-alt me-2"></i>Cairo, Egypt
+          </a></li>
+          <li><a href="#">
+            <i class="bi bi-clock me-2"></i>24/7 Support
+          </a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="row">
+        <div class="col-md-6">
+          <p>&copy; 2024 X-rental. All rights reserved.</p>
+        </div>
+        <div class="col-md-6">
+          <p>
+            <a href="#" class="text-light me-3">Privacy Policy</a>
+            <a href="#" class="text-light me-3">Terms of Service</a>
+            <a href="#" class="text-light">Cookie Policy</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
 
 <!-- Additional CSS for pagination and improved styling -->
-<!-- Additional CSS for heart button and property cards -->
+/* تحديث CSS لتطبيق التصميم الجديد مع الحفاظ على الوظائف الموجودة */
+
 <style>
-  .pagination .page-link {
-    color: #08227B;
-    border-color: #08227B;
+  /* Hero Section - نفس التصميم القديم */
+  .hero-section {
+    position: relative;
+    height: 500px; /* ارتفاع معقول */
+    width: 100%;
+    max-width: 1377.79px;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border-radius: 18px;
+    background: linear-gradient(rgba(8, 34, 123, 0.6), rgba(8, 34, 123, 0.6)), 
+                url('assets/images/background.webp') center/cover no-repeat;
   }
-  
-  .pagination .page-item.active .page-link {
-    background-color: #08227B;
-    border-color: #08227B;
+
+  .hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-radius: 18px;
   }
-  
-  .pagination .page-link:hover {
+
+  /* Search Container - وضعه في المنتصف */
+  .search-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    margin-top: 200px; /* تحريك الـ search لتحت شوية */
+    padding: 0 !important;
+  }
+
+  .search-bar-container {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 15px !important;
+    background-color: white;
+    border-radius: 50px !important;
+  }
+
+  /* Search Input - حجم أكبر */
+  .search-input .form-control {
+    box-shadow: none;
+    font-size: 1.1rem !important;
+    padding: 12px 15px !important;
+    height: auto !important;
+    border: none;
+  }
+
+  .search-input .btn {
+    font-size: 1.1rem !important;
+    padding: 10px 20px !important;
+  }
+
+  /* Property Filters */
+  .property-filters .btn {
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+  }
+
+  .property-filters .btn-primary {
+    background-color: #08227B !important;
+    border-color: #08227B !important;
+  }
+
+  .property-filters .btn-link {
+    background-color: transparent;
+    border: none;
+    color: #333 !important;
+  }
+
+  .property-filters .btn-link:hover {
     background-color: rgba(8, 34, 123, 0.1);
-    border-color: #08227B;
+    color: #08227B !important;
   }
-  
+
+  /* Property Cards */
   .property-card {
     border-radius: 20px !important;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     height: 100%;
+    width: 350px;
+    max-width: 100%;
+    margin: 0 auto;
   }
-  
+
   .property-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
   }
-  
+
   .property-img {
     height: 220px;
     width: 100%;
     object-fit: cover;
   }
-  
+
   .property-info {
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     height: calc(100% - 220px);
   }
-  
+
   .property-details {
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
     padding: 15px 0;
     margin: auto 0;
   }
-  
+
+  /* Buttons */
   .btn-primary {
-    background-color: #08227B;
-    border-color: #08227B;
+    background-color: #08227B !important;
+    border-color: #08227B !important;
   }
-  
+
   .btn-primary:hover {
-    background-color: #061a5f;
-    border-color: #061a5f;
+    background-color: #061a5f !important;
+    border-color: #061a5f !important;
   }
-  
+
+  .btn-outline-primary {
+    color: #08227B !important;
+    border-color: #08227B !important;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #08227B !important;
+    border-color: #08227B !important;
+    color: white !important;
+  }
+
   .text-primary {
     color: #08227B !important;
   }
-  
+
   /* Heart Button Styles */
   .heart-btn {
     min-width: 45px;
@@ -321,52 +524,62 @@
     transition: all 0.3s ease;
     border-width: 1px;
   }
-  
+
   .heart-btn:hover {
     transform: scale(1.1);
   }
-  
-  /* Not favorited state - gray outline */
+
   .heart-btn.btn-outline-secondary {
     color: #6c757d;
     border-color: #6c757d;
     background-color: transparent;
   }
-  
+
   .heart-btn.btn-outline-secondary:hover {
     color: #dc3545;
     border-color: #dc3545;
     background-color: transparent;
   }
-  
-  .heart-btn.btn-outline-secondary:hover i {
-    color: #dc3545;
-  }
-  
-  /* Favorited state - red filled */
+
   .heart-btn.btn-danger {
     color: white;
     background-color: #dc3545;
     border-color: #dc3545;
   }
-  
+
   .heart-btn.btn-danger:hover {
     background-color: #c82333;
     border-color: #bd2130;
   }
-  
-  /* Heart icon transitions */
+
   .heart-btn i {
     font-size: 16px;
     transition: all 0.3s ease;
   }
-  
+
+  /* Pagination */
+  .pagination .page-link {
+    color: #08227B;
+    border-color: #08227B;
+  }
+
+  .pagination .page-item.active .page-link {
+    background-color: #08227B;
+    border-color: #08227B;
+  }
+
+  .pagination .page-link:hover {
+    background-color: rgba(8, 34, 123, 0.1);
+    border-color: #08227B;
+  }
+
+  /* Loading Animation */
   .loading-shimmer {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
   }
-  
+
   @keyframes shimmer {
     0% {
       background-position: -200% 0;
@@ -375,8 +588,18 @@
       background-position: 200% 0;
     }
   }
-  
-  @media (max-width: 768px) {
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .hero-section {
+      height: 400px;
+      border-radius: 15px;
+    }
+
+    .search-container {
+      margin-top: 150px;
+    }
+
     .property-filters {
       overflow-x: auto;
       flex-wrap: nowrap;
@@ -384,29 +607,380 @@
       justify-content: flex-start;
       padding-bottom: 5px;
     }
-    
+
     .search-bar-container {
       flex-direction: column;
+      border-radius: 20px !important;
     }
-    
+
     .search-input {
       width: 100%;
       margin-top: 10px;
-      padding: 0 15px;
     }
-    
+  }
+
+  @media (max-width: 768px) {
+    .hero-section {
+      height: 350px;
+      border-radius: 12px;
+    }
+
+    .search-container {
+      margin-top: 100px;
+      padding: 0 15px !important;
+    }
+
+    .search-bar-container {
+      border-radius: 15px !important;
+      padding: 12px !important;
+    }
+
+    .property-filters {
+      padding: 10px 0;
+    }
+
+    .search-input {
+      padding: 0 15px 15px 15px;
+    }
+
     .pagination {
       flex-wrap: wrap;
       justify-content: center;
     }
-    
+
     .property-card {
       margin-bottom: 1rem;
+      width: 100%;
     }
-    
+
     .heart-btn {
       min-width: 40px;
       height: 35px;
     }
   }
+
+  @media (max-width: 576px) {
+    .hero-section {
+      height: 300px;
+    }
+
+    .search-container {
+      margin-top: 80px;
+    }
+  }
+
+  /* Modern Footer Styles */
+  .footer {
+    background: linear-gradient(135deg, #08227B 0%, #0a2f8f 50%, #061b5f 100%);
+    color: white;
+    padding: 4rem 0 1.5rem 0;
+    margin-top: 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+    animation: float 20s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(-20px, -10px) rotate(1deg); }
+    66% { transform: translate(20px, 10px) rotate(-1deg); }
+  }
+
+  .footer h5 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 1.8rem;
+    font-size: 1.3rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+
+  .footer h5::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.3));
+    border-radius: 2px;
+  }
+
+  .footer ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer ul li {
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .footer ul li a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-size: 0.95rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    padding: 0.3rem 0;
+    position: relative;
+  }
+
+  .footer ul li a::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.5));
+    transition: width 0.4s ease;
+  }
+
+  .footer ul li a:hover {
+    color: white;
+    padding-left: 15px;
+    transform: translateX(5px);
+  }
+
+  .footer ul li a:hover::before {
+    width: 12px;
+  }
+
+  .footer .social-icons {
+    display: flex;
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+
+  .footer .social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-size: 1.3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .footer .social-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .footer .social-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .footer .social-icon:hover::before {
+    left: 100%;
+  }
+
+  .footer .logo-footer {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(45deg, #ffffff, #e8e8e8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+  }
+
+  .footer .footer-description {
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    font-size: 1rem;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 2rem;
+    margin-top: 3rem;
+    position: relative;
+    backdrop-filter: blur(5px);
+  }
+
+  .footer-bottom p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .footer-bottom a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .footer-bottom a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: white;
+    transition: width 0.3s ease;
+  }
+
+  .footer-bottom a:hover {
+    color: white;
+  }
+
+  .footer-bottom a:hover::after {
+    width: 100%;
+  }
+
+  /* Modern Footer Responsive */
+  @media (max-width: 768px) {
+    .footer {
+      padding: 3rem 0 1.5rem 0;
+      text-align: center;
+    }
+
+    .footer h5 {
+      margin-bottom: 1.2rem;
+      font-size: 1.2rem;
+    }
+
+    .footer h5::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .footer ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer ul li a:hover {
+      padding-left: 0;
+      transform: translateX(0);
+    }
+
+    .footer ul li a:hover::before {
+      display: none;
+    }
+
+    .footer .social-icons {
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .footer .social-icon {
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+    }
+
+    .footer .logo-footer {
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 1.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .footer-bottom .row {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .footer {
+      padding: 2.5rem 0 1rem 0;
+    }
+
+    .footer .logo-footer {
+      font-size: 2rem;
+    }
+
+    .footer .social-icons {
+      gap: 0.8rem;
+    }
+
+    .footer .social-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.1rem;
+    }
+  }
+  /* Profile Image Styles for Header */
+.profile-image-container-header {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.profile-image-header {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #08227B;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+.profile-image-header.default-image {
+  position: relative;
+  opacity: 1;
+  z-index: 1;
+}
+
+.profile-image-header.user-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
 </style>
+
+<!-- إضافة الـ Footer HTML قبل إغلاق المحتوى -->

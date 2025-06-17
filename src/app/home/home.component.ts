@@ -405,4 +405,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     return 'badge bg-secondary';
   }
+  hasUserImage(): boolean {
+  const userData = this.authService.getUserData();
+  return !!(userData?.imageUrl);
+}
+
+getUserActualImageUrl(): string {
+  const userData = this.authService.getUserData();
+  return userData?.imageUrl || '';
+}
 }
