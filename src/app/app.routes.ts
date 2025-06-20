@@ -15,6 +15,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { authGuard } from './guards/auth.guard';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { MyPropertiesComponent } from './my-properties/my-properties.component'; // إضافة هذا
+import { FiltersComponent } from './filters/filters.component';
 
 export const routes: Routes = [
   // Default route redirects to login
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'about-us', component: AboutUsComponent , canActivate: [authGuard] },
   {path:'my-properties',component:MyPropertiesComponent , canActivate: [authGuard]},
+  {path: 'filters', component: FiltersComponent, canActivate: [authGuard]},
   // Wildcard route
   { path: '**', redirectTo: '/log-in' }
 ];

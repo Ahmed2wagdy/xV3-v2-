@@ -1,1 +1,197 @@
-<p>filters works!</p>
+<!-- app/filters/filters.component.html -->
+<div class="container">
+  <!-- Left side (Blue background with image) -->
+  <div class="image-side">
+    <div class="close-button">
+      <button class="close-btn" (click)="goBack()">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+
+    <div class="image-container">
+      <img src="assets/images/filter.png" alt="Filter Illustration" class="side-image" />
+    </div>
+
+    <div class="filter-icon">
+      <i class="bi bi-funnel-fill"></i>
+    </div>
+
+    <div class="text-content">
+      <h2>Advanced Property Search</h2>
+      <p>Find your dream property with our powerful filters</p>
+    </div>
+  </div>
+
+  <!-- Right side (Form inputs) -->
+  <div class="form-side">
+    <div class="form-container">
+      <h1 class="title">
+        <i class="bi bi-funnel"></i> Property Filters
+      </h1>
+      <p class="subtitle">Customize your search to find the perfect property</p>
+
+      <form [formGroup]="filtersForm" (ngSubmit)="onSubmit()">
+        <!-- Property Type & Listing Type Row -->
+        <div class="form-row">
+          <div class="form-group half">
+            <label class="form-label">Property Type</label>
+            <select formControlName="propertyType" class="form-control">
+              <option *ngFor="let type of propertyTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          
+          <div class="form-group half">
+            <label class="form-label">Listing Type</label>
+            <select formControlName="listingType" class="form-control">
+              <option *ngFor="let type of listingTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="form-group">
+          <label class="form-label">Price Range (EGP)</label>
+          <div class="range-input">
+            <input type="number" formControlName="minPrice" class="form-control range-field" placeholder="Min Price" min="0">
+            <span class="range-separator">to</span>
+            <input type="number" formControlName="maxPrice" class="form-control range-field" placeholder="Max Price" min="0">
+          </div>
+        </div>
+
+        <!-- Size Range -->
+        <div class="form-group">
+          <label class="form-label">Size Range (m²)</label>
+          <div class="range-input">
+            <input type="number" formControlName="minSize" class="form-control range-field" placeholder="Min Size" min="0">
+            <span class="range-separator">to</span>
+            <input type="number" formControlName="maxSize" class="form-control range-field" placeholder="Max Size" min="0">
+          </div>
+        </div>
+
+        <!-- Bedrooms & Bathrooms Row -->
+        <div class="form-row">
+          <div class="form-group half">
+            <label class="form-label">Bedrooms</label>
+            <select formControlName="bedrooms" class="form-control">
+              <option value="">Any</option>
+              <option value="0">Studio</option>
+              <option value="1">1 Bedroom</option>
+              <option value="2">2 Bedrooms</option>
+              <option value="3">3 Bedrooms</option>
+              <option value="4">4 Bedrooms</option>
+              <option value="5">5+ Bedrooms</option>
+            </select>
+          </div>
+          
+          <div class="form-group half">
+            <label class="form-label">Bathrooms</label>
+            <select formControlName="bathrooms" class="form-control">
+              <option value="">Any</option>
+              <option value="1">1 Bathroom</option>
+              <option value="2">2 Bathrooms</option>
+              <option value="3">3 Bathrooms</option>
+              <option value="4">4+ Bathrooms</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="location-section">
+          <h4 class="section-title">
+            <i class="bi bi-geo-alt"></i> Location
+          </h4>
+          
+          <div class="form-group">
+            <label class="form-label">Governorate</label>
+            <select formControlName="governorate" class="form-control">
+              <option value="">All Governorates</option>
+              <option *ngFor="let gov of governorates" [value]="gov">{{ gov }}</option>
+            </select>
+          </div>
+
+          <div class="form-group" *ngIf="availableCities.length > 0">
+            <label class="form-label">City</label>
+            <select formControlName="city" class="form-control">
+              <option value="">All Cities</option>
+              <option *ngFor="let city of availableCities" [value]="city">{{ city }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Amenities Section -->
+        <div class="amenities-section">
+          <h4 class="section-title">
+            <i class="bi bi-stars"></i> Amenities & Features
+          </h4>
+          
+          <div class="amenities-grid">
+            <label class="amenity-item">
+              <input type="checkbox" formControlName="parking">
+              <span class="amenity-label"><i class="bi bi-car-front"></i> Parking</span>
+            </label>
+
+            <label class="amenity-item">
+              <input type="checkbox" formControlName="elevator">
+              <span class="amenity-label"><i class="bi bi-arrows-expand"></i> Elevator</span>
+            </label>
+
+            <label class="amenity-item">
+              <input type="checkbox" formControlName="security">
+              <span class="amenity-label"><i class="bi bi-shield-check"></i> Security</span>
+            </label>
+
+            <label class="amenity-item">
+              <input type="checkbox" formControlName="pool">
+              <span class="amenity-label"><i class="bi bi-water"></i> Pool</span>
+            </label>
+
+            <label class="amenity-item">
+              <input type="checkbox" formControlName="gym">
+              <span class="amenity-label"><i class="bi bi-heart-pulse"></i> Gym</span>
+            </label>
+
+            <label class="amenity-item">
+              <input type="checkbox" formControlName="garden">
+              <span class="amenity-label"><i class="bi bi-tree"></i> Garden</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Additional Filters -->
+        <div class="form-row">
+          <div class="form-group half">
+            <label class="form-label">Furnished</label>
+            <select formControlName="furnished" class="form-control">
+              <option value="">Any</option>
+              <option value="furnished">Furnished</option>
+              <option value="unfurnished">Unfurnished</option>
+              <option value="semi-furnished">Semi-Furnished</option>
+            </select>
+          </div>
+
+          <div class="form-group half">
+            <label class="form-label">Year Built</label>
+            <input type="number" formControlName="yearBuilt" class="form-control" placeholder="e.g., 2020" min="1900">
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" (click)="resetFilters()">
+            <i class="bi bi-arrow-clockwise"></i> Reset All
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-search"></i> Apply Filters
+          </button>
+        </div>
+      </form>
+
+      <!-- Back to Home link -->
+      <div class="back-link">
+        <a (click)="goBack()" class="text-link">
+          <i class="bi bi-arrow-left"></i> Back to Properties
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

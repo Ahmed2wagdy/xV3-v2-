@@ -1,1 +1,162 @@
-<p>about-us works!</p>
+<style>
+  body {
+    font-family: 'Tajawal', sans-serif; /* أو 'Poppins' لو تحب */
+  }
+
+  .about-section {
+    background: linear-gradient(to right, #243B55, #141E30); /* تدرج أنعم */
+    color: white;
+    padding: 60px 20px;
+  }
+
+  .about-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  .about-subtitle {
+    font-size: 2.1rem;
+    text-align: center;
+    margin-bottom: 40px;
+    opacity: 0.9;
+  }
+
+  .custom-list li {
+    background: transparent;
+    border: none;
+    color: white;
+    font-weight: 500;
+    padding-left: 0;
+  }
+
+  .team-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+  }
+
+  .team-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  }
+
+  .team-card .card-body {
+    background-color: white;
+    color: #08227B;
+    font-weight: 600;
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  .list-group-numbered > .list-group-item::before {
+    color: #FFD700;
+    font-weight: bold;
+  }
+</style>
+
+
+<div class="about-section">
+  <div class="container">
+    <h1 class="about-title">About Dizon</h1>
+    <p class="about-subtitle">
+      Dizon is a digital property management designed by 8 Computer Science students to transform the real estate experience in Egypt.
+    </p>
+
+    <!-- Project Overview -->
+    <div class="mb-5">
+      <p class="lead">
+        Dizon offers an AI-powered property management system with voice interaction, personalized search, OCR-powered document handling, secure payments, and smart dashboards.
+      </p>
+      <p class="lead">
+        It brings together listings, automation, and future scalability—making it the fast, smart, and reliable solution for modern real estate.
+      </p>
+    </div>
+
+    <!-- Beneficiaries -->
+    <div class="mb-4">
+      <h3 class="fw-bold">Beneficiaries</h3>
+      <ul class="list-group custom-list">
+        <li class="list-group-item">• Property Owners & Investors</li>
+        <li class="list-group-item">• Home Buyers & Renters</li>
+        <li class="list-group-item">• Real Estate Agents & Brokers</li>
+        <li class="list-group-item">• General Users and Professionals</li>
+      </ul>
+    </div>
+
+    <!-- Objectives -->
+    <div class="mb-5">
+      <h3 class="fw-bold">Objectives</h3>
+      <ul class="list-group list-group-numbered custom-list">
+        <li class="list-group-item">Redefine Real Estate Transactions</li>
+        <li class="list-group-item">Integrate AI, Voice, and Automation</li>
+        <li class="list-group-item">Dual Search: Filters + Chatbot</li>
+        <li class="list-group-item">Smart Listings & Voice Chatbot</li>
+        <li class="list-group-item">Personalized Recommendations</li>
+        <li class="list-group-item">Responsive Cross-Device Interface</li>
+        <li class="list-group-item">Sponsored Ads & Secure Payments</li>
+        <li class="list-group-item">OCR Image-Based Search</li>
+        <li class="list-group-item">Robust Backend & AI Integration</li>
+        <li class="list-group-item">Quality Assurance & Testing</li>
+      </ul>
+    </div>
+
+    <!-- Meet the Team -->
+    <div>
+      <h3 class="text-center fw-bold mb-4">Meet the Team</h3>
+      <div class="row g-4 justify-content-center">
+        <!-- Each team member card -->
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Ibrahim Mohamed El-Toukhy</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Habiba Mostafa Abdel-Zaher</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Moamen Youssef Ebrahim</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Ibrahim Mohamed Ahmed</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Abdelrahman Ayman Sayed</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Ahmed Meselhy</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Ahmed Wagdy</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-3">
+          <div class="card team-card text-center h-100">
+            <img src="assets/images/profile.jpeg" class="card-img-top" alt="Team Member">
+            <div class="card-body">Abouzaid</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

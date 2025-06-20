@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { Subscription, forkJoin } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { PropertyService, Property, PropertyFilters } from '../services/property.service';
@@ -36,33 +36,71 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   constructor(
     private router: Router,
+      private route: ActivatedRoute,
     private authService: AuthService,
     private propertyService: PropertyService
   ) { }
 
-  ngOnInit(): void {
-    // Subscribe to authentication state changes
-    const authSub = this.authService.currentUser$.subscribe(user => {
-      this.isLoggedIn = !!user;
-      if (user) {
-        this.userName = this.authService.getUserFullName();
-      } else {
-        this.userName = 'Guest';
-        this.router.navigate(['/log-in']);
-      }
-    });
-    this.subscriptions.push(authSub);
-
-    // Check initial authentication state
-    this.isLoggedIn = this.authService.isLoggedIn();
-    if (!this.isLoggedIn) {
+ngOnInit(): void {
+  // 1. التحقق من تسجيل الدخول
+  const authSub = this.authService.currentUser$.subscribe(user => {
+    this.isLoggedIn = !!user;
+    if (user) {
+      this.userName = this.authService.getUserFullName();
+    } else {
+      this.userName = 'Guest';
       this.router.navigate(['/log-in']);
-      return;
     }
+  });
+  this.subscriptions.push(authSub);
 
-    this.userName = this.authService.getUserFullName();
-    this.loadProperties();
+  // 2. تحقق أولي من حالة تسجيل الدخول
+  this.isLoggedIn = this.authService.isLoggedIn();
+  if (!this.isLoggedIn) {
+    this.router.navigate(['/log-in']);
+    return;
   }
+
+  this.userName = this.authService.getUserFullName();
+
+  // 3. استقبال الفلاتر من الـ URL
+  this.route.queryParams.subscribe(params => {
+    if (params) {
+      const filters: PropertyFilters = {};
+
+      if (params['propertyType'] && params['propertyType'] !== 'All') {
+        filters.propertyType = params['propertyType'];
+      }
+      if (params['minPrice']) {
+        filters.minPrice = Number(params['minPrice']);
+      }
+      if (params['maxPrice']) {
+        filters.maxPrice = Number(params['maxPrice']);
+      }
+      if (params['bedrooms']) {
+        filters.bedrooms = Number(params['bedrooms']);
+      }
+      if (params['governorate']) {
+        filters.governate = params['governorate'];
+      }
+      if (params['city']) {
+        filters.city = params['city'];
+      }
+
+      if (Object.keys(filters).length > 0) {
+        this.loadProperties(filters);
+      }
+
+      if (params['filtered'] === 'true') {
+        this.applyStoredFilters();
+      }
+    }
+  });
+
+  // 4. تحميل العقارات بدون فلاتر إذا لم توجد فلاتر
+  this.loadProperties();
+}
+
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
@@ -143,17 +181,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     }, 3000);
   }
 
-  filterByType(type: string): void {
-    this.selectedFilter = type;
-    this.currentPage = 1;
-    
-    const filters: PropertyFilters = {};
-    if (type !== 'All') {
-      filters.propertyType = type;
-    }
-    
-    this.loadProperties(filters);
+filterByType(type: string): void {
+  this.selectedFilter = type;
+  this.currentPage = 1;
+  
+  // Clear stored filters when using quick filters
+  sessionStorage.removeItem('propertyFilters');
+  
+  const filters: PropertyFilters = {};
+  if (type !== 'All') {
+    filters.propertyType = type;
   }
+
+  this.loadProperties(filters);
+}
 
   searchProperties(): void {
     if (!this.searchQuery.trim()) {
@@ -355,6 +396,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   goToChatBot(): void {
     this.router.navigate(['/chat-bot']);
   }
+ 
 
   getShortenedDescription(description: string, maxLength: number = 100): string {
     if (!description) return 'No description available';
@@ -413,5 +455,76 @@ export class HomeComponent implements OnInit, OnDestroy {
 getUserActualImageUrl(): string {
   const userData = this.authService.getUserData();
   return userData?.imageUrl || '';
+}
+applyStoredFilters(): void {
+  const savedFilters = sessionStorage.getItem('propertyFilters');
+  if (savedFilters) {
+    const filters = JSON.parse(savedFilters);
+    console.log('Applying filters from storage:', filters);
+    
+    const propertyFilters: PropertyFilters = {
+      pageIndex: 1,
+      pageSize: this.pageSize
+    };
+    
+    if (filters.propertyType && filters.propertyType !== 'All') {
+      propertyFilters.propertyType = filters.propertyType;
+    }
+    if (filters.listingType && filters.listingType !== 'All') {
+      propertyFilters.listingType = filters.listingType;
+    }
+    if (filters.minPrice) {
+      propertyFilters.minPrice = Number(filters.minPrice);
+    }
+    if (filters.maxPrice) {
+      propertyFilters.maxPrice = Number(filters.maxPrice);
+    }
+    if (filters.bedrooms) {
+      propertyFilters.bedrooms = Number(filters.bedrooms);
+    }
+    if (filters.bathrooms) {
+      propertyFilters.bathrooms = Number(filters.bathrooms);
+    }
+    if (filters.minSize) {
+      propertyFilters.minSize = Number(filters.minSize);
+    }
+    if (filters.maxSize) {
+      propertyFilters.maxSize = Number(filters.maxSize);
+    }
+    if (filters.governorate) {
+      propertyFilters.governate = filters.governorate;
+    }
+    if (filters.city) {
+      propertyFilters.city = filters.city;
+    }
+    
+    this.currentPage = 1;
+    this.loadProperties(propertyFilters);
+    this.showActiveFilters(filters);
+  }
+}
+
+showActiveFilters(filters: any): void {
+  const activeFilters = Object.keys(filters).length;
+  this.showAlertMessage(
+    `${activeFilters} filter${activeFilters > 1 ? 's' : ''} applied. Showing filtered results.`,
+    'info'
+  );
+}
+
+clearFilters(): void {
+  sessionStorage.removeItem('propertyFilters');
+  this.currentPage = 1;
+  this.selectedFilter = 'All';
+  this.searchQuery = '';
+  this.loadProperties();
+  this.showAlertMessage('Filters cleared. Showing all properties.', 'info');
+}
+
+openFilters(): void {
+  this.router.navigate(['/filters']);
+}
+hasActiveFilters(): boolean {
+  return sessionStorage.getItem('propertyFilters') !== null;
 }
 }

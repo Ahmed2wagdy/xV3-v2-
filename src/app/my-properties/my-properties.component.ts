@@ -24,7 +24,7 @@ export class MyPropertiesComponent implements OnInit, OnDestroy {
   selectedProperty?: Property;
   
   // Property types
-  propertyTypes = ['Apartment', 'House', 'Villa', 'Office', 'Commercial', 'Land'];
+propertyTypes = ['Apartment', 'House', 'Villa', 'Chalet', 'Office', 'Commercial', 'Land'];
   
   // Egyptian cities
   cities = [

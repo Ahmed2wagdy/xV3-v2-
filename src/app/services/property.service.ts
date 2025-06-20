@@ -14,6 +14,24 @@ export interface PropertyResponse {
     $values: Property[];
   };
 }
+export interface PropertyFilters {
+  pageIndex?: number;
+  pageSize?: number;
+  propertyType?: string;
+  listingType?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  minSize?: number;
+  maxSize?: number;
+  governate?: string;
+  city?: string;
+  searchTerm?: string;
+  yearBuilt?: number;
+  furnished?: string;
+  amenities?: string[];
+}
 
 export interface Property {
   propertyId: number;

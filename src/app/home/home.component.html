@@ -104,13 +104,16 @@
               </div>
               
               <!-- Search Input -->
-              <div class="search-input d-flex align-items-center">
-                <input type="text" class="form-control form-control-sm border-0" placeholder="Search properties..." 
-                       [(ngModel)]="searchQuery" (keyup.enter)="searchProperties()">
-                <button class="btn btn-primary btn-sm rounded-pill ms-2" (click)="searchProperties()" [disabled]="isLoading">
-                  <i class="bi bi-search"></i> Search
-                </button>
-              </div>
+             <div class="search-input d-flex align-items-center">
+  <input type="text" class="form-control form-control-sm border-0" placeholder="Search properties..." 
+         [(ngModel)]="searchQuery" (keyup.enter)="searchProperties()">
+  <button class="btn btn-filter btn-sm rounded-pill ms-2" (click)="openFilters()">
+    <i class="bi bi-funnel-fill"></i> Filters
+  </button>
+  <button class="btn btn-primary btn-sm rounded-pill ms-2" (click)="searchProperties()" [disabled]="isLoading">
+    <i class="bi bi-search"></i> Search
+  </button>
+</div>
             </div>
           </div>
         </div>
@@ -120,6 +123,16 @@
 </section>
 
 <!-- Property Listings -->
+ <!-- أضف هذا بعد عنوان الصفحة في قسم Property Listings -->
+<div *ngIf="hasActiveFilters()" class="alert alert-info d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <i class="bi bi-funnel-fill"></i>
+    <strong>Filters Active:</strong> Showing filtered results
+  </div>
+  <button class="btn btn-sm btn-outline-info" (click)="clearFilters()">
+    <i class="bi bi-x-circle"></i> Clear Filters
+  </button>
+</div>
 <section class="property-listings py-5">
   <div class="container">
     <!-- Loading State -->
@@ -979,6 +992,25 @@
   top: 0;
   left: 0;
   z-index: 2;
+}
+.btn-filter {
+  background-color: #08227B;
+;
+  color: white;
+  border: none;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-filter:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-filter:focus {
+  box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
 }
 
 </style>

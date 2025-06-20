@@ -38,8 +38,8 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   imagePreviews: string[] = [];
   
   // Property types
-  propertyTypes = ['Apartment', 'House', 'Villa', 'Office', 'Commercial', 'Land'];
-  
+// استبدل propertyTypes بهذا
+propertyTypes = ['Apartment', 'House', 'Villa', 'Chalet', 'Office', 'Commercial', 'Land'];  
   // Listing types - إضافة جديدة
   listingTypes = ['For Rent', 'For Sale', 'For Investment'];
   
