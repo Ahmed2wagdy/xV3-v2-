@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service'; // تأكد من المسار صح
 
 @Component({
   selector: 'app-forget-pass',
@@ -14,10 +15,13 @@ export class ForgetPassComponent implements OnInit {
   forgotPasswordForm!: FormGroup;
   submitted = false;
   isLoading = false;
+  successMessage = '';
+  errorMessage = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    public router: Router
+    public router: Router,
+    private authService: AuthService  // 👈 أضفت AuthService
   ) { }
 
   ngOnInit(): void {
@@ -41,20 +45,47 @@ export class ForgetPassComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
+    this.errorMessage = '';
+    this.successMessage = '';
 
     if (this.forgotPasswordForm.invalid) return;
 
     this.isLoading = true;
-    setTimeout(() => {
-      console.log('Form submitted', this.forgotPasswordForm.value);
-      this.router.navigate(['/otp-verification'], {
-        queryParams: { contact: this.forgotPasswordForm.value.emailOrPhone }
-      });
-      this.isLoading = false;
-    }, 2000);
+    
+    // 👈 تعطيل الفورم أثناء الإرسال
+    this.forgotPasswordForm.disable();
+    
+    const emailOrPhone = this.forgotPasswordForm.getRawValue().emailOrPhone;
+    
+    console.log('📧 Sending OTP to:', emailOrPhone);
+
+    // 👈 استخدام AuthService بدلاً من setTimeout
+    this.authService.forgotPassword({ email: emailOrPhone }).subscribe({
+      next: (response) => {
+        console.log('✅ OTP sent successfully:', response);
+        
+        this.successMessage = response.message || 'OTP sent successfully! Check your email.';
+        this.isLoading = false;
+        
+        // 👈 الانتقال لصفحة OTP بعد النجاح
+        setTimeout(() => {
+          this.router.navigate(['/otp-verification'], {
+            queryParams: { contact: emailOrPhone }
+          });
+        }, 1500);
+      },
+      error: (error) => {
+        console.error('❌ Failed to send OTP:', error);
+        
+        this.errorMessage = error.message || 'Failed to send OTP. Please try again.';
+        this.isLoading = false;
+        
+        // 👈 إعادة تفعيل الفورم عند الخطأ
+        this.forgotPasswordForm.enable();
+      }
+    });
   }
 
-  // ✅ أضفناها لحل الخطأ
   goHome(): void {
     this.router.navigate(['/home']);
   }

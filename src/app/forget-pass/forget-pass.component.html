@@ -20,6 +20,18 @@
             <div class="step-number">3</div>
           </div>
         </div>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="success-message">
+          <i class="bi bi-check-circle"></i>
+          {{ successMessage }}
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-alert">
+          <i class="bi bi-exclamation-triangle"></i>
+          {{ errorMessage }}
+        </div>
   
         <form (ngSubmit)="onSubmit()" [formGroup]="forgotPasswordForm">
           <!-- Email or Phone label -->
@@ -29,13 +41,13 @@
   
           <!-- Email input -->
           <div class="form-group">
+            <!-- 👈 إزالة [disabled] من هنا -->
             <input 
               type="email" 
               formControlName="emailOrPhone" 
               placeholder="Enter your email address"
               class="form-control"
               [ngClass]="{'invalid': submitted && f['emailOrPhone'].errors}"
-              [disabled]="isLoading"
             >
             <div *ngIf="submitted && f['emailOrPhone'].errors" class="error-message">
               <div *ngIf="f['emailOrPhone'].errors['required']">Email is required</div>
@@ -44,7 +56,7 @@
           </div>
           
           <!-- Submit button -->
-          <button type="submit" class="reset-btn" [disabled]="isLoading">
+          <button type="submit" class="reset-btn" [disabled]="isLoading || forgotPasswordForm.invalid">
             <span *ngIf="!isLoading">Send Reset Code</span>
             <span *ngIf="isLoading">
               <i class="bi bi-arrow-clockwise animate-spin"></i>
@@ -97,5 +109,35 @@
     .form-control:disabled {
       background-color: #f5f5f5;
       opacity: 0.6;
+    }
+
+    /* Success and Error Messages */
+    .success-message {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .error-alert {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .success-message i,
+    .error-alert i {
+      font-size: 18px;
     }
   </style>
